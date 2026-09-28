@@ -576,23 +576,25 @@ function parse1C(rows){
   // колонки месяцев: по заголовку «1, 2, 3 … Итого», иначе — по сумме в строке «Итого»
   let monthCols=null, monthIdx=null, totCol=null;
   for(const r of rows.slice(0,Math.min(totIdx,12))){
-    const cols=[]; let j=3;
     const mIdx=c=>{ const n=num(c); if(n!=null&&n>=1&&n<=12&&Number.isInteger(n)) return n-1; const t=String(c||'').trim(); return MONTH_RE.findIndex(re=>re.test(t)); };
-    const idx=[];
+    // месяцы могут начинаться с любой колонки (в выгрузках 1С бывают пустые колонки B и C, а бывают и нет)
+    let j=1; while(j<r.length && mIdx(r[j])<0) j++;
+    const cols=[], idx=[];
     while(j<r.length && mIdx(r[j])>=0 && cols.length<12){ idx.push(mIdx(r[j])); cols.push(j); j++; }
     if(cols.length && /итого/i.test(r[j]||'')){ monthCols=cols; monthIdx=idx; totCol=j; break; }
   }
   if(!monthCols){
-    for(let j=4;j<tr.length;j++){
+    let st=1; while(st<tr.length && num(tr[st])==null) st++;
+    for(let j=st+1;j<tr.length;j++){
       const v=num(tr[j]); if(v==null) continue;
-      let s=0; for(let k=3;k<j;k++) s+=num(tr[k])||0;
+      let s=0; for(let k=st;k<j;k++) s+=num(tr[k])||0;
       if(Math.abs(s-v)<1){ totCol=j; break; }
     }
     if(totCol==null){ // отчёт без разбивки по месяцам — берём последнюю колонку с суммой
       for(let j=tr.length-1;j>=1;j--) if(num(tr[j])!=null){ totCol=j; break; }
       if(totCol==null) throw new Error('в отчёте 1С не найдена колонка с суммой');
       monthCols=[];
-    } else { monthCols=[]; for(let k=3;k<totCol;k++) monthCols.push(k); }
+    } else { monthCols=[]; for(let k=st;k<totCol;k++) monthCols.push(k); }
   }
   if(!monthIdx) monthIdx=monthCols.map((c,i)=>i);
   const vals=r=>{ const a=new Array(12).fill(0); monthCols.forEach((c,i)=>{ const k=monthIdx[i]; if(k>=0&&k<12) a[k]+=num(r[c])||0; }); return a; };
