@@ -51,7 +51,8 @@ header{display:flex;align-items:center;gap:1.1vw;flex:0 0 auto}
 .tab .prog{position:absolute;left:0;bottom:0;height:3px;background:var(--accent-bright);width:0}
 .month{display:flex;align-items:center;gap:.4vw;background:var(--surface-2);border:1px solid var(--border);
   border-radius:999px;padding:.3vh .5vw;margin-left:auto}
-.month.off{visibility:hidden}
+.month.off{display:none}
+.month.off + .iconbtn{margin-left:auto}
 .month button{background:none;border:0;cursor:pointer;font-size:2vh;padding:.1vh .6vw;color:var(--text-secondary)}
 .month button:disabled{opacity:.3;cursor:default}
 .month span{font-size:1.8vh;font-weight:600;min-width:9vw;text-align:center}
@@ -149,6 +150,8 @@ main{flex:1 1 auto;min-height:0;position:relative}
 .amt span{font-size:1.4vh;color:var(--text-muted)}
 .qbox{display:flex;align-items:center;gap:2px;background:var(--surface-2);border:1px solid var(--border);border-radius:999px;padding:3px}
 .qbox.off{display:none}
+.qbox .yr{display:none}
+.qbox.fy .yr{display:inline-block}
 .qbox button{background:none;border:0;border-radius:999px;cursor:pointer;font-size:1.55vh;padding:.45vh .8vw;color:var(--text-secondary);white-space:nowrap}
 .qbox button.on{background:var(--accent);color:#272727;font-weight:700}
 .qbox button.now:not(.on){color:var(--text-primary);text-decoration:underline;text-underline-offset:3px}
@@ -333,6 +336,90 @@ body.mobile .rows,body.mobile .srows{display:block}
 body.mobile .row,body.mobile .arow,body.mobile .srow{flex:none;min-height:auto;border-bottom:1px solid var(--surface-3)}
 body.mobile .who{justify-content:flex-start}
 body.mobile .row .who .nm,body.mobile .arow .who .nm{flex:0 1 auto}
+
+/* ---------- Фокус ---------- */
+.focus{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;overflow:hidden;padding:.8vh .8vw}
+.focus table{width:100%;height:100%;border-collapse:separate;border-spacing:2px 1px;table-layout:fixed}
+.focus th{font-size:1.25vh;line-height:1.15;color:var(--text-muted);font-weight:500;text-align:center;padding:.2vh .15vw;vertical-align:bottom}
+.focus th.l{text-align:left}
+.focus th.tot{color:var(--text-primary);font-weight:700}
+.focus td{font-size:1.5vh;line-height:1.1;text-align:center;border-radius:4px;font-variant-numeric:tabular-nums;white-space:nowrap;padding:0 .2vw}
+.focus td.n{color:var(--text-muted);font-size:1.3vh}
+.focus td.nm{text-align:left;font-weight:600;overflow:hidden;text-overflow:ellipsis}
+.focus tr.top td.nm{color:var(--text-primary)}
+.focus tr.oth td.nm{font-weight:500;color:var(--text-secondary)}
+.focus td.mop{text-align:left;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis}
+.focus td.vis b{font-weight:700}
+.focus td.vis .z{color:#e0796b}
+.focus td.vis small{color:var(--text-muted);font-size:1.15vh;margin-left:.2vw}
+.focus td.tot{font-weight:700;background:var(--surface-2)}
+.focus td.c0{color:transparent}
+.focus td.eq{opacity:.85}
+.focus tr.grp td{background:none;color:var(--accent);font-weight:700;font-size:1.35vh;border-bottom:1px solid var(--border);padding-top:.5vh}
+.focus tr.grp td.nm{letter-spacing:.02em;text-transform:uppercase}
+.focus tr.sumr td{background:var(--surface-2);font-weight:700;color:var(--text-primary)}
+.focus tr.zero td.nm{color:var(--text-muted)}
+.focus tr.top.red td.nm{color:#ff6b5b}
+.focus tr.oth.red td.nm{color:#e0574a}
+.focus tr.top.orange td.nm{color:#f5a03a}
+.focus tr.oth.orange td.nm{color:#d9952f}
+.focus tr.brk td{border-top:1px solid var(--border)}
+.focus tr.brk td{padding-top:.3vh}
+body.mobile .focus{overflow-x:auto;padding:8px}
+body.mobile .focus table{width:auto;height:auto;table-layout:auto}
+body.mobile .focus td.nm{min-width:150px;max-width:170px;white-space:normal;line-height:1.2}
+body.mobile .focus td.n{display:none}body.mobile .focus th:first-child{display:none}
+body.mobile .focus td:not(.nm):not(.mop){min-width:44px}
+body.mobile .focus td,body.mobile .focus th{font-size:12px;padding:5px 3px}
+body.mobile .focus td.nm{position:sticky;left:0;background:var(--surface-1);z-index:1}
+
+/* ---------- ДЗ / ПДЗ ---------- */
+.dz-grid{flex:1 1 auto;display:grid;grid-template-columns:54fr 46fr;grid-template-rows:38fr 62fr;gap:1vh .8vw;min-height:0}
+.dz-grid > .panel{display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.dz-mgr{grid-row:1/3}
+.dz-mgr .dh,.dz-mgr .dr{display:grid;grid-template-columns:11vw 1fr 6vw 5.6vw 6.4vw 4.6vw 5.4vw;align-items:center;gap:.55vw}
+.dz-mgr .dh{font-size:1.3vh;color:var(--text-muted);padding:0 .3vw .6vh;border-bottom:1px solid var(--border)}
+.dz-mgr .dh span:nth-child(n+3){text-align:right}
+.dz-mgr .rows{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
+.dz-mgr .dr{flex:1 1 0;max-height:6.2vh;border-bottom:1px solid var(--border);padding:0 .3vw}
+.dz-mgr .dr .nm{font-size:1.75vh;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dz-mgr .dr.lead .nm{color:var(--text-secondary);font-weight:500}
+.dz-mgr .dr .v{font-size:1.65vh;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.dz-mgr .dr .v.p{font-weight:700}
+.dz-mgr .dr .v small{display:block;font-size:1.15vh;color:var(--text-muted);font-weight:400}
+.dz-mgr .sep{font-size:1.2vh;color:var(--text-muted);letter-spacing:.06em;text-transform:uppercase;padding:.6vh .3vw .2vh}
+.dzbar{height:1.6vh;border-radius:3px;background:var(--surface-2);display:flex;overflow:hidden}
+.dzbar i{display:block;height:100%}
+.dzbar i.ok{background:#5d5a58}
+.kp{font-weight:700}
+.kp.g{color:var(--good-text)} .kp.o{color:var(--warning)} .kp.r{color:var(--bad-text)}
+.dz-legend{display:flex;flex-wrap:wrap;gap:.3vh 1vw;font-size:1.25vh;color:var(--text-muted);margin-top:.6vh}
+.dz-legend i{display:inline-block;width:1vh;height:1vh;border-radius:2px;margin-right:.3vw;vertical-align:middle}
+.dz-chart svg{flex:1 1 auto;width:100%;min-height:0}
+.dz-top table{width:100%;border-collapse:collapse;table-layout:fixed}
+.dz-top th{font-size:1.25vh;color:var(--text-muted);font-weight:500;text-align:right;padding:0 .3vw .4vh;border-bottom:1px solid var(--border)}
+.dz-top th.l{text-align:left}
+.dz-top td{font-size:1.5vh;padding:.42vh .3vw;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.dz-top td.l{text-align:left;overflow:hidden;text-overflow:ellipsis}
+.dz-top td.c{color:var(--text-secondary)}
+.dz-top td.p{font-weight:700}
+.dz-top td .dzbar{height:1.3vh}
+.dz-top tr.fc td.l:first-child{color:var(--accent)}
+body.mobile .dz-grid{display:flex;flex-direction:column;gap:10px}
+body.mobile .dz-mgr .dh,body.mobile .dz-mgr .dr{grid-template-columns:minmax(0,1fr) 58px 66px 54px 58px;gap:5px}
+body.mobile .dz-mgr .dh > :nth-child(2),body.mobile .dz-mgr .dh > :nth-child(4),body.mobile .dz-mgr .dr > :nth-child(2),body.mobile .dz-mgr .dr > :nth-child(4){display:none}
+body.mobile .dz-mgr .dh span{min-width:0;line-height:1.15}
+
+
+body.mobile .dz-mgr .dr{min-height:44px;max-height:none}
+body.mobile .dz-mgr .dr .nm{font-size:13px} body.mobile .dz-mgr .dr .v{font-size:12px} body.mobile .dz-mgr .dr .v small{font-size:10px}
+body.mobile .dz-mgr .dh{font-size:11px}
+body.mobile .dzbar{height:10px}
+body.mobile .dz-chart svg{height:190px;flex:none}
+body.mobile .dz-top{overflow-x:auto}
+body.mobile .dz-top table{min-width:560px}
+body.mobile .dz-top td{font-size:12px;padding:6px 4px} body.mobile .dz-top th{font-size:11px}
+body.mobile .dz-legend{font-size:11px}
 </style>
 </head>
 <body>
@@ -352,7 +439,7 @@ body.mobile .row .who .nm,body.mobile .arow .who .nm{flex:0 1 auto}
     <button id="mNext" aria-label="Следующий месяц">›</button>
   </div>
   <button class="iconbtn" id="btnPause" title="Остановить / запустить автоматическое перелистывание (Пробел)">⏸ Пауза</button>
-  <div class="qbox" id="qBox" role="group" aria-label="Квартал"><button data-q="0">1 кв</button><button data-q="1">2 кв</button><button data-q="2">3 кв</button><button data-q="3">4 кв</button></div>
+  <div class="qbox" id="qBox" role="group" aria-label="Период"><button data-q="y" class="yr">Год</button><button data-q="0">1 кв</button><button data-q="1">2 кв</button><button data-q="2">3 кв</button><button data-q="3">4 кв</button></div>
   <button class="iconbtn" id="btnRefresh" title="Обновить сейчас (R)">⟳ Обновить</button>
 </div>
 
@@ -391,6 +478,10 @@ body.mobile .row .who .nm,body.mobile .arow .who .nm{flex:0 1 auto}
       <div class="rows" id="akbRows"></div>
     </div>
   </section>
+  <!-- 7. Фокусные предприятия -->
+  <section class="screen"><div class="panel focus" id="focusBox"></div></section>
+  <!-- 8. ДЗ / ПДЗ -->
+  <section class="screen"><div class="dz-grid" id="dzBox"></div></section>
 </main>
 
 <footer>
@@ -472,6 +563,71 @@ const CONFIG = {
     [/miyamoto/i,                ['MIYAMOTOMETROLOGY','MIYAMOTO']],
     [/оснастк/i,                 ['ОСНАСТКА']],
     [/прочее/i,                  ['ПРОЧИЙ ИНСТРУМЕНТ']]
+  ],
+  /* ФОКУСНЫЕ ПРЕДПРИЯТИЯ — порядок строк на экране «Фокус» (первые FOCUS_TOP — приоритетные).
+     name  — точно как клиент в отчёте 1С;
+     mop   — закреплённый МОП (если пусто — берётся менеджер с наибольшими отгрузками этому клиенту);
+     visit — как предприятие пишут в «ВЫРАБОТКА МОП» (колонка G). «*» в начале — искать внутри названия. */
+  /* ДЗ / ПДЗ: вкладки в таблице «ВЫРАБОТКА МОП», их заполняет скрипт из задачи Битрикс24 */
+  DZ_TAB: 'ДЗ',
+  DZ_HIST_TAB: 'ДЗ история',
+  DZ_KPDZ_WARN: 0.03,     // Кпдз выше — оранжевый
+  DZ_KPDZ_BAD: 0.10,      // Кпдз выше — красный
+  DZ_TOP_CLIENTS: 12,
+  DZ_EXCLUDE: [/МЕТИЗ-ЭКСПЕРТ/i, /ТОТАЛ-ГРУПП/i],   // не показывать: выведены из ПДЗ (исполнительный лист)
+  DZ_MONTH_RESULT_DAY: 7, // файл «итогов месяца» — первый файл месяца, датированный не позже этого числа
+  /* исключения: долг по организации+контрагенту записывать другому менеджеру */
+  DZ_REASSIGN: [
+    {org:/ПРОМИНВЕСТ/i, client:/^РПЗ(\s|$)/i, mgr:'Кульков Сергей'}   // все отгрузки от Проминвеста идут от Кулькова
+  ],
+  FOCUS_TOP: 12,
+  FOCUS_VISIT_MONTHS: 3,
+  FOCUS_RED_SALES: 1e6,   // наименование КРАСНЫМ, если отгрузки за год меньше этой суммы
+  FOCUS_RED_VISITS: 3,    // наименование ОРАНЖЕВЫМ, если визитов закреплённого МОП за 3 месяца меньше этого числа
+  FOCUS: [
+    {name:'КРАСНОЕ ЗНАМЯ ЗАВОД ПАО', mop:'Беляев Дмитрий',               visit:['КРАСНОЕ ЗНАМЯ','КЗ']},
+    {name:'АЛМАЗ НПО ПАО', mop:'Архипов Герман',                         visit:['АЛМАЗ']},
+    {name:'ММЗ АО г.Йошкар-Ола', mop:'Сёмин Владислав',                   visit:['ММЗ']},
+    {name:'ИСТОК ИМ. ШОКИНА НПП АО', mop:'Ореховский Сергей',               visit:['ИСТОК','*ШОКИНА']},
+    {name:'РПЗ АО', mop:'Хлебова Татьяна',                                visit:['РПЗ']},
+    {name:'ВЫМПЕЛ ИМ. И.И. ТОРОПОВА ГОС МКБ АО', mop:'Галин Андрей',   visit:['ВЫМПЕЛ','*ТОРОПОВА']},
+    {name:'КАЛАШНИКОВ КОНЦЕРН АО', mop:'Сёмин Владислав',                 visit:['*КАЛАШНИКОВ']},
+    {name:'ИНСТРУМЕНТ-Д ООО', mop:'Сёмин Владислав',                      visit:['ИНСТРУМЕНТ-Д']},
+    {name:'МАШИНОСТРОИТЕЛЬНЫЙ ЗАВОД АО', mop:'Хлебова Татьяна',           visit:['МСЗ','МАШИНОСТРОИТЕЛЬНЫЙ ЗАВОД']},
+    {name:'БЮРО 1440 ООО', mop:'Галин Андрей',                         visit:['БЮРО','БЮРО 1440']},
+    {name:'ВНИИА ФГУП филиал МОКБ "МАРС"', mop:'Беседкин Александр',         visit:['МАРС','МОКБ МАРС','ВНИИА (М)','ВНИИА (МАРС)']},
+    {name:'ВНИИА ФГУП', mop:'Беседкин Александр',                            visit:['ВНИИА']},
+    {name:'ЗиО-Подольск АО', mop:'Ореховский Сергей',                       visit:['ЗИО','ЗИО-ПОДОЛЬСК']},
+    {name:'РУЗХИММАШ АО', mop:'Сёмин Владислав',                          visit:['РУЗХИММАШ','РХМ']},
+    {name:'Наро-Фоминский машиностроительный завод АО', mop:'Ореховский Сергей', visit:['НФМЗ','*НАРО-ФОМИН']},
+    {name:'МИР СТАНОЧНИКА ООО', mop:'Ерышев Алексей',                    visit:['МИР СТАНОЧНИКА']},
+    {name:'НИКИМТ-АТОМСТРОЙ АО', mop:'Кондря Максим',                   visit:['НИКИМТ','НИКИМТ-АТОМСТРОЙ']},
+    {name:'ГУСАР ООО', mop:'Прокопенко Никита',                             visit:['ГУСАР']},
+    {name:'НПЦАП АО', mop:'Галин Андрей',                              visit:['НПЦАП']},
+    {name:'КБХИММАШ ИМ. А.М. ИСАЕВА АО', mop:'Кондря Максим',           visit:['КБХИММАШ','*ИСАЕВА']},
+    {name:'НПОДАР АО', mop:'Кондря Максим',                             visit:['НПОДАР','НПО ДАР']},
+    {name:'РЕГИОН ГНПП АО', mop:'Ореховский Сергей',                        visit:['РЕГИОН']},
+    {name:'РКК ЭНЕРГИЯ ПАО', mop:'Кондря Максим',                       visit:['РКК ЭНЕРГИЯ','ЭНЕРГИЯ']},
+    {name:'РПКБ АО', mop:'Хлебова Татьяна',                               visit:['РПКБ']},
+    {name:'РЯЗАНСКИЙ РАДИОЗАВОД АО', mop:'Беляев Дмитрий',               visit:['РРЗ','*РЯЗАНСКИЙ РАДИО']},
+    {name:'ЦНИИАГ АО', mop:'Хлебова Татьяна',                             visit:['ЦНИИАГ']},
+    {name:'ВЕДАПРОЕКТ ООО', mop:'Галин Андрей',                        visit:['ВЕДАПРОЕКТ']},
+    {name:'Российские Космические Системы АО', mop:'Архипов Герман',     visit:['РКС','*КОСМИЧЕСКИЕ СИСТЕМЫ']},
+    {name:'СЕРП И МОЛОТ САРАТОВСКИЙ ЗАВОД ОАО', mop:'Сёмин Владислав',    visit:['СЕРП И МОЛОТ','*СЕРП И МОЛОТ']}
+  ],
+  /* колонки таблицы «Фокус» — как в макросе; справа — сегменты 1С */
+  FOCUS_COLS: [
+    ['INSIZE',                   ['INSIZE']],
+    ['MIYAMOTO',                 ['MIYAMOTOMETROLOGY','MIYAMOTO']],
+    ['ZCC-CT',                   ['ZCC-CT','ZCCCT','ZCC CT']],
+    ['АКСИС монолит',            ['АКСИС МОНОЛИТ']],
+    ['АКСИС прочее',             ['АКСИС ПРОЧЕЕ']],
+    ['Металлорез ГОСТ Инстулс',  ['МЕТАЛЛОРЕЗ (ГОСТ ИНСТУЛС)']],
+    ['Металлорез прочие ТМ',     ['МЕТАЛЛОРЕЗ (ПРОЧИЕ ТМ)']],
+    ['Метизы',                   ['МЕТИЗЫ']],
+    ['Оборудование',             ['ОБОРУДОВАНИЕ']],
+    ['Оснастка',                 ['ОСНАСТКА']],
+    ['Прочий инстр.',            ['ПРОЧИЙ ИНСТРУМЕНТ']]
   ]
 };
 /* ================================================================= */
@@ -816,7 +972,9 @@ const SCREENS=[
   {tab:'Оплаты',         title:'Оплаты: план и факт по менеджерам',   month:false, tiles:'sales', sales:true},
   {tab:'Отгрузки',       title:'Отгрузки: план и факт по менеджерам', month:false, tiles:'sales', sales:true},
   {tab:'Направления',    title:'Отгрузки по направлениям: руководители направлений', month:false, tiles:'sales', sales:true},
-  {tab:'АКБ',            title:'Активная клиентская база',            month:true,  tiles:'akb'}
+  {tab:'АКБ',            title:'Активная клиентская база',            month:true,  tiles:'akb'},
+  {tab:'Фокус',          title:'Фокусные предприятия: отгрузки по категориям', month:false, tiles:'focus', focus:true},
+  {tab:'ДЗ/ПДЗ',         title:'Дебиторская и просроченная задолженность', month:false, tiles:'dz', dz:true}
 ];
 $('overlay').classList.add('js');
 if(CONFIG.MOBILE){ document.documentElement.classList.add('mobile'); document.body.classList.add('mobile'); CONFIG.ROTATE_SEC=0; }
@@ -827,9 +985,12 @@ function render(){
   const S=SCREENS[screen];
   $('title').textContent=S.title;
   $('monthBox').classList.toggle('off',!S.month);
-  $('qBox').classList.toggle('off',!S.sales);
-  { const P0=periodInfo(); document.querySelectorAll('#qBox button').forEach(b=>{ b.classList.toggle('on',+b.dataset.q===P0.q); b.classList.toggle('now',+b.dataset.q===P0.qNow); }); }
+  $('qBox').classList.toggle('off',!S.sales&&!S.focus);
+  $('qBox').classList.toggle('fy',!!S.focus);
+  { const P0=periodInfo(); document.querySelectorAll('#qBox button').forEach(b=>{ const q=b.dataset.q, on=S.focus?(focusQ==null?q==='y':+q===focusQ):(q!=='y'&&+q===P0.q); b.classList.toggle('on',on); b.classList.toggle('now',q!=='y'&&+q===P0.qNow); }); }
   if(S.sales){ renderSalesScreen(); return; }
+  if(S.focus){ renderFocus(); return; }
+  if(S.dz){ renderDZ(); return; }
   if(!DATA){ return; }
   const idx=DATA.findIndex(d=>d.key===sel); const mo=DATA[idx]; const prev=DATA[idx-1];
   $('mLabel').textContent=mName(mo);
@@ -1175,6 +1336,296 @@ function renderAkb(mo,prev){
   fitChips('#akbRows');
 }
 
+
+/* ---------- Фокусные предприятия ---------- */
+let focusQ=null;   // null — год, 0..3 — квартал
+const fKey=s=>normTxt(s).replace(/["«»“”]/g,'').replace(/\s+/g,' ').trim();
+function focusIdxOfOrg(org){
+  const o=normOrg(org);
+  return (CONFIG.FOCUS||[]).findIndex(f=>(f.visit||[]).some(a=>{
+    const st=a[0]==='*', A=normTxt(st?a.slice(1):a);
+    return st? o.includes(A) : (o===A || o.startsWith(A+' ') || o.startsWith(A+'('));
+  }));
+}
+function surname(n){ return String(n||'').split(' ')[0]; }
+function fmtCell(v){
+  if(!(v>0.5)) return '';
+  const m=v/1e6;
+  return m>=0.05 ? m.toLocaleString('ru-RU',{minimumFractionDigits:1,maximumFractionDigits:1}) : '<0,1';
+}
+function focusPeriod(){
+  const P=periodInfo(); const asOf=SALES&&SALES.ship&&SALES.ship.asOf;
+  const lastM=asOf?asOf.m:P.m;
+  if(focusQ==null){ const ms=P.yMonths.filter(k=>k<=lastM); return {months:P.yMonths, label:`${P.y} год (янв–${MONTHS_SHORT[lastM]})`, short:`${P.y} год`}; }
+  const qm=[3*focusQ,3*focusQ+1,3*focusQ+2];
+  return {months:qm, label:`${Q_NAMES[focusQ]} квартал ${P.y} (${MONTHS_SHORT[qm[0]]}–${MONTHS_SHORT[qm[2]]})`, short:`${Q_NAMES[focusQ]} кв.`};
+}
+function focusData(){
+  const FP=focusPeriod(), cols=CONFIG.FOCUS_COLS||[];
+  const colOf={}; cols.forEach((c,i)=>c[1].forEach(sg=>colOf[normTxt(sg)]=i));
+  const byKey=new Map(); let allTot=0;
+  for(const m of SALES.ship.managers) for(const c of m.clients){
+    const k=fKey(c.name); let o=byKey.get(k);
+    if(!o){ o={cells:new Array(cols.length).fill(0), other:0, tot:0, totY:0, mgr:new Map()}; byKey.set(k,o); }
+    for(const s of c.segs){
+      const v=sumM(s.v,FP.months), ci=colOf[normTxt(s.name)];
+      if(ci!=null) o.cells[ci]+=v; else o.other+=v;
+      o.tot+=v; allTot+=v; o.totY+=sum(s.v);
+      o.mgr.set(m.name,(o.mgr.get(m.name)||0)+sum(s.v));
+    }
+  }
+  // визиты: последние N вкладок «ВЫРАБОТКА МОП»
+  const vm=DATA?DATA.slice(-(CONFIG.FOCUS_VISIT_MONTHS||3)):[];
+  const visits=(CONFIG.FOCUS||[]).map(()=>new Map());
+  for(const d of vm) for(const p of d.people) for(const v of p.visits){
+    const i=focusIdxOfOrg(v.org); if(i<0) continue;
+    visits[i].set(p.name,(visits[i].get(p.name)||0)+v.count);
+  }
+  const rows=(CONFIG.FOCUS||[]).map((f,i)=>{
+    const o=byKey.get(fKey(f.name))||{cells:new Array(cols.length).fill(0),other:0,tot:0,totY:0,mgr:new Map()};
+    let mop=f.mop||'', mopAuto=false;
+    if(!mop){
+      const cand=[...o.mgr].filter(([n,v])=>v>0&&!isHidden(n)).sort((a,b)=>(isLeader(a[0])-isLeader(b[0]))||b[1]-a[1]);
+      if(cand.length){ mop=cand[0][0]; mopAuto=true; }
+    }
+    const vis=visits[i]; let vMop=null;
+    if(mop){ vMop=0; for(const [n,c] of vis) if(personKey(n)===personKey(mop)) vMop+=c; }
+    const vAll=sum([...vis.values()]);
+    const warn=[]; let lvl='';
+    if((vMop||0)<(CONFIG.FOCUS_RED_VISITS||3)){ warn.push(`визитов МОП за 3 месяца: ${vMop||0} — меньше ${CONFIG.FOCUS_RED_VISITS||3}`); lvl='orange'; }
+    if(o.totY<(CONFIG.FOCUS_RED_SALES||1e6)){ warn.unshift(`отгрузки за год ${fmtM(o.totY)} — меньше ${fmtM(CONFIG.FOCUS_RED_SALES||1e6)}`); lvl='red'; }
+    return {f, i, top:i<(CONFIG.FOCUS_TOP||12), ...o, mop, mopAuto, vMop, vAll, vis, warn, lvl};
+  });
+  return {FP, cols, rows, allTot, vm};
+}
+function renderFocus(){
+  const box=$('focusBox');
+  if(!SALES||!SALES.ship){ box.innerHTML=`<div class="empty">Нет данных об отгрузках (лист «Отгрузки 2026»).${salesErr?'<br>'+esc(salesErr):''}</div>`; $('tiles').innerHTML=''; $('subtitle').textContent=''; return; }
+  const D=focusData(), {FP,cols,rows}=D;
+  const dd=a=>a?`${pad(a.d)}.${pad(a.m+1)}`:'—';
+  const vmLbl=D.vm.length?`${MONTHS_SHORT[D.vm[0].m]}–${MONTHS_SHORT[D.vm[D.vm.length-1].m]}`:'—';
+  $('subtitle').textContent=`${FP.label} · отгрузки 1С на ${dd(SALES.ship.asOf)} · млн ₽ с НДС · визиты МОП за ${vmLbl} по «ВЫРАБОТКА МОП»`;
+  // плитки
+  const ftot=sum(rows.map(r=>r.tot)), ttot=sum(rows.filter(r=>r.top).map(r=>r.tot));
+  const zero=rows.filter(r=>!(r.tot>0.5)), noVis=rows.filter(r=>r.top&&r.mop&&!r.vMop);
+  const vSum=sum(rows.map(r=>r.vMop||0));
+  const pc=(a,b)=>b>0?Math.round(a/b*100)+'%':'—';
+  $('tiles').innerHTML=`
+   <div class="tile"><div class="lbl">Отгрузки фокусным · ${FP.short}</div><div class="val">${fmtM(ftot)}</div><div class="note">${pc(ftot,D.allTot)} всех отгрузок компании (${fmtM(D.allTot)})</div></div>
+   <div class="tile"><div class="lbl">Из них приоритетные ${CONFIG.FOCUS_TOP}</div><div class="val">${fmtM(ttot)}</div><div class="note">${pc(ttot,ftot)} от фокусных</div></div>
+   <div class="tile" data-tip="${esc(zero.map(r=>r.f.name).join('<br>'))}"><div class="lbl">Без отгрузок за период</div><div class="val">${zero.length} <small>из ${rows.length}</small></div><div class="note">${esc(zero.slice(0,4).map(r=>normOrg(r.f.name)).join(', '))||'&nbsp;'}${zero.length>4?' …':''}</div></div>
+   <div class="tile" data-tip="${esc(noVis.map(r=>r.f.name+' — '+surname(r.mop)).join('<br>'))}"><div class="lbl">Визиты закреплённых МОП · ${vmLbl}</div><div class="val">${vSum}</div><div class="note">${noVis.length?`<span class="delta-down">приоритетные без визита МОП: ${noVis.length}</span>`:'<span class="delta-up">✓ все приоритетные посещены</span>'}</div></div>`;
+  // таблица
+  const maxC=Math.max(1,...rows.flatMap(r=>r.cells)), maxT=Math.max(1,...rows.map(r=>r.tot));
+  const heat=(v,mx)=>{ if(!(v>0.5)) return ''; const t=Math.sqrt(v/mx); const a=[0x2d,0x2b,0x2b], b=[0xb0,0x56,0x2f]; return `background:rgb(${a.map((x,i)=>Math.round(x+(b[i]-x)*(0.15+0.85*t)))})`; };
+  const tipRub=v=>Math.round(v).toLocaleString('ru-RU')+' ₽';
+  const eqIdx=cols.findIndex(c=>/оборуд/i.test(c[0]));
+  const rowHtml=r=>{
+    const visTip=r.vis.size?[...r.vis].sort((a,b)=>b[1]-a[1]).map(([n,c])=>`${n} — ${c}`).join('<br>'):'визитов нет';
+    const mgrTip=[...r.mgr].filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`${n} — ${fmtM(v)}`).join('<br>');
+    const vis = !r.mop ? `<span class="d">—</span>`
+      : `<b class="${r.vMop?'':'z'}">${r.vMop}</b>${r.vAll>r.vMop?`<small>/${r.vAll}</small>`:''}`;
+    return `<tr class="${r.top?'top':'oth'}${r.tot>0.5?'':' zero'}${r.lvl?' '+r.lvl:''}${r.i===(CONFIG.FOCUS_TOP||12)?' brk':''}">
+      <td class="n">${r.i+1}</td>
+      <td class="nm" data-tip="${esc(r.f.name+(r.warn.length?'<br>⚠ '+r.warn.join('<br>⚠ '):''))}">${esc(r.f.name)}</td>
+      <td class="mop" data-tip="${esc((r.mopAuto?'В списке закреплений предприятия нет — МОП определён по наибольшим отгрузкам<br>':r.mop?'Закреплён: '+r.mop+'<br>':'')+(mgrTip?'Отгрузки за год:<br>'+mgrTip:'Отгрузок в этом году нет'))}">${r.mop?esc(surname(r.mop))+(r.mopAuto?'<sup style="color:var(--text-muted)">*</sup>':''):'—'}</td>
+      <td class="vis" data-tip="${esc('Визиты за '+vmLbl+':<br>'+visTip)}">${vis}</td>
+      <td class="tot" style="${heat(r.tot,maxT)}" data-tip="${esc(r.f.name+': '+tipRub(r.tot)+(r.other>0.5?'<br>в т.ч. прочие сегменты '+tipRub(r.other):''))}">${fmtCell(r.tot)||'<span class="d">—</span>'}</td>
+      ${r.cells.map((v,k)=>`<td class="${v>0.5?'':'c0'}${k===eqIdx?' eq':''}" style="${heat(v,maxC)}"${v>0.5?` data-tip="${esc(normOrg(r.f.name)+' · '+cols[k][0]+': '+tipRub(v))}"`:''}>${fmtCell(v)}</td>`).join('')}
+    </tr>`;
+  };
+  const sumRow=(label,list,cls)=>{
+    const cs=cols.map((c,k)=>sum(list.map(r=>r.cells[k]))), t=sum(list.map(r=>r.tot));
+    const vm=sum(list.map(r=>r.vMop||0));
+    return `<tr class="${cls}"><td class="n"></td><td class="nm">${label}</td><td></td><td class="vis">${vm||''}</td><td class="tot">${fmtCell(t)}</td>${cs.map(v=>`<td>${fmtCell(v)}</td>`).join('')}</tr>`;
+  };
+  const top=rows.filter(r=>r.top), oth=rows.filter(r=>!r.top);
+  const W=CONFIG.MOBILE?'':`<colgroup><col style="width:1.8%"><col style="width:17%"><col style="width:6.6%"><col style="width:4.4%"><col style="width:5.6%">${cols.map(()=>'<col>').join('')}</colgroup>`;
+  box.innerHTML=`<table>${W}<thead><tr><th>#</th><th class="l">Предприятие</th><th class="l">МОП</th><th data-tip="Визиты закреплённого МОП за ${vmLbl}; после «/» — все визиты к предприятию">Визиты<br>${vmLbl}</th><th class="tot">Итого</th>${cols.map(c=>`<th>${esc(c[0])}</th>`).join('')}</tr></thead><tbody>
+    ${rows.map(rowHtml).join('')}
+    ${sumRow('Всего по фокусным',rows,'sumr')}
+  </tbody></table>`;
+}
+
+/* ---------- ДЗ / ПДЗ ---------- */
+const DZ_BUCKETS=[
+  ['до 30 дн.',   /^ПРОС\.?\s*<\s*(3|7|15|30)\s*ДН/, '#d8b24c'],
+  ['31–60 дн.',   /^ПРОС\.?\s*<\s*60\s*ДН/,          '#e08a3a'],
+  ['61–90 дн.',   /^ПРОС\.?\s*<\s*90\s*ДН/,          '#d9622f'],
+  ['91–180 дн.',  /^ПРОС\.?\s*<\s*(120|180)\s*ДН/,   '#c4433a'],
+  ['свыше 180',   /^ПРОС\.?\s*СВЫШЕ\s*180/,          '#8e2a2a']
+];
+function parseDZ(rows){
+  let asOf=null;
+  for(const r of rows.slice(0,4)) for(const c of r){ const m=String(c||'').match(/(\d\d)\.(\d\d)\.(\d{4})/); if(m&&!asOf) asOf={y:+m[3],m:+m[2]-1,d:+m[1]}; }
+  const hi=rows.findIndex(r=>normTxt(r[0])==='ОРГАНИЗАЦИЯ');
+  if(hi<0) throw new Error('во вкладке «'+CONFIG.DZ_TAB+'» нет таблицы по контрагентам');
+  const summ=new Map(); let tot=null, gk=null;
+  for(let i=0;i<hi;i++){
+    const r=rows[i]; const n=String(r[2]||'').trim(); const sl=num(r[3]), pz=num(r[4]); if(sl==null||!n) continue;
+    if(/^итого/i.test(n)) tot={sales:sl,pdz:pz||0};
+    else if(/(^|\s)ГК(\s|$)/i.test(n)||/^КДЗ/i.test(n)) gk={sales:sl,pdz:pz||0};
+    else { const nm=rename(n); summ.set(personKey(nm),{name:nm,sales:sl,pdz:pz||0}); }
+  }
+  const H=rows[hi].map(normTxt);
+  // если Google потерял заголовки числовых колонок — подставляем стандартный макет отчёта 1С
+  const STD=['ОРГАНИЗАЦИЯ','ОСНОВНОЙ МЕНЕДЖЕР','ГРУППА ПРОДАЖ','КОНТРАГЕНТ','ИНН','КПП','КОЛ ДНЕЙ ОТСРОЧКИ','НЕ ПРОСРОЧЕНО','ДО ОПЛ.< 7ДН.','ДО ОПЛ.< 30ДН.','ДО ОПЛ.< 60ДН.','ДО ОПЛ.< 3ДН.','ДО ОПЛ.< 15ДН.','ДО ОПЛ.< 90ДН.','ПРОСРОЧЕНО','ПРОС.< 60ДН.','ПРОС.< 7ДН.','ПРОС.СВЫШЕ 180ДН.','ПРОС.< 180ДН.','ПРОС.< 90ДН.','ПРОС.< 30ДН.','ПРОС.< 120ДН.','ПРОС.< 15ДН.','ПРОС.< 3ДН.','ИТОГО'];
+  if(!H.some(h=>/^ПРОСРОЧЕНО/.test(h)) && H[3]==='КОНТРАГЕНТ') STD.forEach((x,i)=>{ if(!H[i]) H[i]=x; });
+  const col=re=>H.findIndex(h=>re.test(h));
+  const cOrg=col(/^ОРГАНИЗАЦИЯ/), cM=col(/^ОСНОВНОЙ МЕНЕДЖЕР/), cK=col(/^КОНТРАГЕНТ/), cD=col(/ОТСРОЧК/), cN=col(/^НЕ ПРОСРОЧЕНО/), cO=col(/^ПРОСРОЧЕНО/), cT=col(/^ИТОГО/);
+  if(cK<0||cT<0) throw new Error('во вкладке «'+CONFIG.DZ_TAB+'» не найдены колонки «Контрагент» / «Итого»');
+  const bCols=DZ_BUCKETS.map(b=>H.map((h,i)=>b[1].test(h)?i:-1).filter(i=>i>=0));
+  const cl=new Map();
+  for(let i=hi+1;i<rows.length;i++){
+    const r=rows[i]; const k=String(r[cK]||'').trim(); if(!k||/^итого/i.test(k)||(CONFIG.DZ_EXCLUDE||[]).some(x=>x.test(k))) continue;
+    let m=rename(String(r[cM]||'').trim());
+    const ra=(CONFIG.DZ_REASSIGN||[]).find(x=>x.org.test(String(r[cOrg]||''))&&x.client.test(k)); if(ra) m=ra.mgr;
+    const key=fKey(k)+'|'+personKey(m);
+    const o=cl.get(key)||{name:k, mgr:m, mkey:personKey(m), dz:0, pdz:0, ok:0, days:null, b:DZ_BUCKETS.map(()=>0)};
+    o.dz+=num(r[cT])||0; o.pdz+=num(r[cO])||0; o.ok+=num(r[cN])||0;
+    const d=num(r[cD]); if(d!=null) o.days=Math.max(o.days||0,d);
+    // сроки просрочки: колонки «прос.…» в выгрузке 1С бывают общими с «до опл.…» — берём их только в пределах суммы «Просрочено»
+    const ov=num(r[cO])||0, bv=bCols.map(cs=>sum(cs.map(c=>num(r[c])||0))), bs=sum(bv);
+    if(ov>0.5 && bs>0.5){ const k=bs>ov+1?ov/bs:1; bv.forEach((v,j)=>o.b[j]+=v*k); }
+    cl.set(key,o);
+  }
+  const clients=[...cl.values()];
+  const mm=new Map();
+  for(const [k,v] of summ) mm.set(k,{key:k,name:v.name,sales:v.sales,pdzS:v.pdz,dz:0,pdz:0,ok:0,b:DZ_BUCKETS.map(()=>0),n:0});
+  for(const c of clients){
+    let o=mm.get(c.mkey); if(!o){ o={key:c.mkey,name:c.mgr,sales:null,pdzS:null,dz:0,pdz:0,ok:0,b:DZ_BUCKETS.map(()=>0),n:0}; mm.set(c.mkey,o); }
+    o.dz+=c.dz; o.pdz+=c.pdz; o.ok+=c.ok; o.n++; c.b.forEach((v,j)=>o.b[j]+=v);
+  }
+  const managers=[...mm.values()].filter(m=>!isHidden(m.name)||m.dz>0.5);
+  const sumC=f=>sum(clients.map(f));
+  return {asOf, tot, gk, managers, clients, dz:sumC(c=>c.dz), pdz:sumC(c=>c.pdz), ok:sumC(c=>c.ok), b:DZ_BUCKETS.map((_,j)=>sumC(c=>c.b[j]))};
+}
+function parseDZHist(rows){
+  const out=new Map();
+  for(const r of rows){
+    const m=String(r[0]||'').match(/(\d\d)\.(\d\d)\.(\d{2,4})/); if(!m) continue;
+    const y=m[3].length===2?2000+(+m[3]):+m[3], key=`${y}-${m[2]}-${m[1]}`;
+    const who=String(r[1]||'').trim(); const o=out.get(key)||{key,d:{y,m:+m[2]-1,d:+m[1]},mgr:{}};
+    const rec={sales:num(r[2]),pdz:num(r[3]),dz:num(r[4])};
+    if(/^итого/i.test(who)) o.tot=rec; else if(/^гк$/i.test(who)) o.gk=rec; else if(who) o.mgr[personKey(rename(who))]=rec;
+    out.set(key,o);
+  }
+  return [...out.values()].filter(x=>x.tot).sort((a,b)=>a.key<b.key?-1:1);
+}
+async function loadDZ(){
+  const [rows,hr,fb]=await Promise.all([fetchRows(CONFIG.DZ_TAB), fetchRows(CONFIG.DZ_HIST_TAB).catch(()=>null), fetchRows('__нет_такой_вкладки__'+Date.now()).catch(()=>null)]);
+  const fbs=fb?sig(fb):null;
+  if(fbs && sig(rows)===fbs) throw new Error('нет вкладки «'+CONFIG.DZ_TAB+'»');
+  const dz=parseDZ(rows);
+  dz.hist=(hr && sig(hr)!==fbs)?parseDZHist(hr):[];
+  return dz;
+}
+/* Кпдз по итогам квартала: среднее Кпдз из файлов «итогов месяца» (первый файл месяца с датой 1–7 числа = итог прошлого месяца) */
+function dzQuarter(H){
+  const res=[], seen=new Set();
+  for(const h of H){ const ym=h.d.y*12+h.d.m; if(h.d.d>(CONFIG.DZ_MONTH_RESULT_DAY||7)||seen.has(ym)) continue; seen.add(ym); res.push({h, rm:ym-1}); }
+  if(!res.length) return null;
+  const last=res[res.length-1], qy=Math.floor(last.rm/12), q=Math.floor((last.rm%12)/3);
+  const items=res.filter(r=>Math.floor(r.rm/12)===qy&&Math.floor((r.rm%12)/3)===q);
+  const kOf=rec=>rec&&rec.sales>0?(rec.pdz||0)/rec.sales:null;
+  const avg=f=>{ const parts=items.map(r=>({m:r.rm%12, d:r.h.d, k:f(r.h)})).filter(x=>x.k!=null); return parts.length?{k:sum(parts.map(x=>x.k))/parts.length, parts}:null; };
+  return {y:qy, q, n:items.length, company:avg(h=>kOf(h.tot)), mgr:key=>avg(h=>kOf(h.mgr[key]))};
+}
+const qTip=(title,a)=>a?`${title}<br>`+a.parts.map(x=>`итог ${MONTHS[x.m].toLowerCase()} (файл ${pad(x.d.d)}.${pad(x.d.m+1)}): ${pct1(x.k)}`).join('<br>')+`<br>среднее: <b>${pct1(a.k)}</b>`:'';
+function kpCls(k){ return k==null?'':k>CONFIG.DZ_KPDZ_BAD?'r':k>CONFIG.DZ_KPDZ_WARN?'o':'g'; }
+const pct1=k=>k==null?'—':(k*100).toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})+'%';
+function dzBar(ok,b,max,pdz){
+  const pdzRest=pdz!=null?pdz-sum(b):0;
+  const w=v=>max>0?Math.max(0,v)/max*100:0;
+  return `<div class="dzbar"><i class="ok" style="width:${w(ok)}%"></i>${b.map((v,j)=>v>0.5?`<i style="width:${w(v)}%;background:${DZ_BUCKETS[j][2]}"></i>`:'').join('')}${pdzRest>0.5?`<i style="width:${w(pdzRest)}%;background:repeating-linear-gradient(45deg,#c4433a 0 3px,#6b2b27 3px 6px)"></i>`:''}</div>`;
+}
+function dzDelta(cur,prev,good='down'){
+  if(prev==null||cur==null) return '';
+  const d=cur-prev; if(Math.abs(d)<1000) return '<span class="d">= к прошлой</span>';
+  const upBad=good==='down';
+  return `<span class="${(d>0)===upBad?'delta-down':'delta-up'}">${d>0?'▲':'▼'} ${fmtM(Math.abs(d))}</span>`;
+}
+function renderDZ(){
+  const box=$('dzBox');
+  if(!DZ){ box.innerHTML=`<div class="panel" style="grid-column:1/-1;grid-row:1/-1"><div class="empty">Нет данных ДЗ/ПДЗ.<br>${esc(dzErr||'')}<br><small>Вкладку «${CONFIG.DZ_TAB}» в таблице «ВЫРАБОТКА МОП» заполняет скрипт из задачи Битрикс24.</small></div></div>`; $('tiles').innerHTML=''; $('subtitle').textContent=''; return; }
+  const D=DZ, dd=a=>a?`${pad(a.d)}.${pad(a.m+1)}.${a.y}`:'—';
+  const H=D.hist||[]; const curKey=D.asOf?`${D.asOf.y}-${pad(D.asOf.m+1)}-${pad(D.asOf.d)}`:null;
+  const prev=[...H].reverse().find(h=>!curKey||h.key<curKey);
+  $('subtitle').textContent=`На ${dd(D.asOf)} · ГП Ерышев · файл из задачи Битрикс24 «Контроль ПДЗ» · суммы с НДС`+(prev?` · сравнение с ${pad(prev.d.d)}.${pad(prev.d.m+1)}`:'');
+  const sales=D.tot?D.tot.sales:null, kp=sales?D.pdz/sales:null, old90=D.b[3]+D.b[4];
+  const dl=prev&&prev.tot?` к ${pad(prev.d.d)}.${pad(prev.d.m+1)}`:'';
+  const QQ=dzQuarter(H), QL=QQ?`${QQ.q+1} кв.${QQ.n<3?` (${QQ.n} из 3 мес.)`:''}`:'';
+  $('tiles').innerHTML=`
+   <div class="tile"><div class="lbl">Дебиторская задолженность</div><div class="val">${fmtM(D.dz)}</div><div class="note">${prev&&prev.tot?dzDelta(D.dz,prev.tot.dz,'none')+dl:'не просрочено '+fmtM(D.ok)}</div></div>
+   <div class="tile"><div class="lbl">Просроченная (ПДЗ)</div><div class="val" style="color:var(--bad-text)">${fmtM(D.pdz)}</div><div class="note">${prev&&prev.tot?dzDelta(D.pdz,prev.tot.pdz)+dl:'&nbsp;'} · ${D.dz>0?Math.round(D.pdz/D.dz*100):0}% от ДЗ</div></div>
+   <div class="tile" data-tip="${esc(QQ&&QQ.company?qTip('Кпдз компании по итогам '+QL,QQ.company):'')}"><div class="lbl">Кпдз (ПДЗ / продажи 12 мес.)</div><div class="val"><span class="kp ${kpCls(kp)}">${pct1(kp)}</span>${QQ&&QQ.company?` <small>итоги ${QL}: <span class="kp ${kpCls(QQ.company.k)}">${pct1(QQ.company.k)}</span></small>`:''}</div><div class="note">продажи 12 мес. ${sales?fmtM(sales):'—'}${D.gk?` · по ГК ${pct1(D.gk.sales?D.gk.pdz/D.gk.sales:null)}`:''}</div></div>
+   <div class="tile"><div class="lbl">ПДЗ старше 90 дней</div><div class="val">${fmtM(old90)}</div><div class="note">${D.pdz>0?Math.round(old90/D.pdz*100):0}% от ПДЗ · свыше 180 дн.: ${fmtM(D.b[4])}</div></div>`;
+  // менеджеры
+  const list=D.managers.filter(m=>!isHidden(m.name)&&(m.dz>0.5||m.pdz>0.5||m.sales>0.5)).map(m=>({...m,kp:m.sales?m.pdz/m.sales:null,qa:QQ?QQ.mgr(m.key):null}))
+    .sort((a,b)=>b.pdz-a.pdz||(b.kp||0)-(a.kp||0)||b.dz-a.dz||(b.sales||0)-(a.sales||0));
+  const maxDz=Math.max(1,...list.map(m=>m.dz));
+  const mRow=m=>{
+    const pm=prev&&prev.mgr[m.key];
+    const tip=`${m.name}<br>ДЗ ${fmtM(m.dz)} · не просрочено ${fmtM(m.ok)}<br>`+DZ_BUCKETS.map((b,j)=>m.b[j]>0.5?`просрочка ${b[0]}: ${fmtM(m.b[j])}`:'').filter(Boolean).join('<br>')+(m.sales!=null?`<br>продажи 12 мес.: ${fmtM(m.sales)}`:'');
+    return `<div class="dr" data-tip="${esc(tip)}">
+      <div class="nm">${esc(shortName(m.name))}</div>
+      ${dzBar(m.ok,m.b,maxDz,m.pdz)}
+      <div class="v">${m.sales!=null?fmtM(m.sales):'—'}</div>
+      <div class="v">${m.dz>0.5?fmtM(m.dz):'0'}<small>${m.n?m.n+' контр.':''}</small></div>
+      <div class="v p" style="${m.pdz>0.5?'color:var(--bad-text)':'color:var(--text-muted)'}">${m.pdz>0.5?fmtM(m.pdz):'0'}<small>${pm&&(m.pdz>0.5||pm.pdz>0.5)?dzDelta(m.pdz,pm.pdz):''}</small></div>
+      <div class="v"><span class="kp ${kpCls(m.kp)}">${pct1(m.kp)}</span></div>
+      <div class="v" data-tip="${esc(m.qa?qTip(m.name+' · Кпдз по итогам '+QL,m.qa):'нет файлов итогов месяца')}"><span class="kp ${kpCls(m.qa&&m.qa.k)}">${m.qa?pct1(m.qa.k):'—'}</span></div></div>`;
+  };
+  const legend=`<div class="dz-legend"><span><i style="background:#5d5a58"></i>не просрочено</span>${DZ_BUCKETS.map(b=>`<span><i style="background:${b[2]}"></i>просрочка ${b[0]}</span>`).join('')}<span><i style="background:repeating-linear-gradient(45deg,#c4433a 0 2px,#6b2b27 2px 4px)"></i>срок не указан</span></div>`;
+  // крупнейшая просрочка
+  const focusKeys=new Set((CONFIG.FOCUS||[]).map(f=>fKey(f.name)));
+  const top=D.clients.filter(c=>c.pdz>0.5).sort((a,b)=>b.pdz-a.pdz).slice(0,CONFIG.DZ_TOP_CLIENTS||12);
+  const maxP=Math.max(1,...top.map(c=>c.pdz));
+  const restN=D.clients.filter(c=>c.pdz>0.5).length-top.length;
+  const tRows=top.map(c=>{
+    const oldest=DZ_BUCKETS.map((b,j)=>c.b[j]>0.5?b[0]:null).filter(Boolean).pop()||'';
+    const tip=`${c.name} · ${c.mgr}<br>ДЗ ${fmtM(c.dz)}, из них просрочено ${fmtM(c.pdz)}<br>`+DZ_BUCKETS.map((b,j)=>c.b[j]>0.5?`${b[0]}: ${fmtM(c.b[j])}`:'').filter(Boolean).join('<br>')+(c.days!=null?`<br>отсрочка по договору: ${c.days} дн.`:'');
+    return `<tr class="${focusKeys.has(fKey(c.name))?'fc':''}" data-tip="${esc(tip)}"><td class="l">${esc(normOrg(c.name))}</td><td class="l c">${esc(surname(c.mgr))}</td><td class="p" style="color:var(--bad-text)">${fmtM(c.pdz)}</td><td>${fmtM(c.dz)}</td><td>${dzBar(0,c.b,maxP,c.pdz)}</td><td class="c">${oldest}</td></tr>`;
+  }).join('');
+  box.innerHTML=`
+    <div class="panel dz-mgr"><h2>По менеджерам: дебиторка и просрочка</h2>
+      <div class="dh"><span>Менеджер</span><span>Структура ДЗ</span><span>Продажи 12 мес.</span><span>ДЗ</span><span>ПДЗ${dl?'<br>и Δ'+dl:''}</span><span>Кпдз сейчас</span><span>Кпдз итоги ${QL||'кв.'}</span></div>
+      <div class="rows">${list.map(mRow).join('')}</div>${legend}</div>
+    <div class="panel dz-chart"><h2>ДЗ и ПДЗ по неделям${H.length?` · с ${pad(H[0].d.d)}.${pad(H[0].d.m+1)}`:''}</h2><svg id="dzChart"></svg></div>
+    <div class="panel dz-top"><h2>Крупнейшая просрочка по контрагентам${restN>0?` · ещё ${restN} с меньшей суммой`:''}<span style="float:right;font-size:1.3vh;font-weight:400;color:var(--text-muted)"><span style="color:var(--accent)">■</span> фокусные предприятия</span></h2>
+      <table><colgroup><col style="width:34%"><col style="width:13%"><col style="width:12%"><col style="width:11%"><col><col style="width:12%"></colgroup>
+      <thead><tr><th class="l">Контрагент</th><th class="l">МОП</th><th>ПДЗ</th><th>ДЗ</th><th class="l">Сроки просрочки</th><th>Старейшая</th></tr></thead><tbody>${tRows||'<tr><td colspan="6" class="l c">Просрочки нет</td></tr>'}</tbody></table></div>`;
+  drawDZChart(H, D);
+}
+function drawDZChart(H, D){
+  const svg=$('dzChart'); if(!svg) return;
+  let pts=H.map(h=>({d:h.d,dz:h.tot.dz,pdz:h.tot.pdz}));
+  const ck=D.asOf?`${D.asOf.y}-${pad(D.asOf.m+1)}-${pad(D.asOf.d)}`:null;
+  if(D.asOf && !H.some(h=>h.key===ck)) pts.push({d:D.asOf,dz:D.dz,pdz:D.pdz});
+  pts=pts.slice(-60);
+  const W=svg.clientWidth||800, Hh=svg.clientHeight||300; svg.setAttribute('viewBox',`0 0 ${W} ${Hh}`);
+  if(pts.length<2){ svg.innerHTML=`<text x="${W/2}" y="${Hh/2}" text-anchor="middle" fill="var(--text-muted)" font-size="${Math.max(12,Hh*0.07)}">История появится после нескольких обновлений</text>`; return; }
+  const fs=Math.max(11,Math.min(15,Hh*0.055)), padL=8, padR=8, padT=fs*2.2, padB=fs*1.9;
+  const max=Math.max(1,...pts.map(p=>Math.max(p.dz||0,p.pdz||0)))*1.05;
+  const n=pts.length, slot=(W-padL-padR)/n, bw=Math.max(3,slot*0.62);
+  const y=v=>Hh-padB-(v/max)*(Hh-padB-padT);
+  let g='';
+  pts.forEach((p,i)=>{
+    const x=padL+slot*i+(slot-bw)/2, last=i===n-1;
+    if(p.dz) g+=`<rect x="${x}" y="${y(p.dz)}" width="${bw}" height="${Hh-padB-y(p.dz)}" rx="2" fill="${last?'#6a6461':'#45403e'}"/>`;
+    g+=`<rect x="${x+bw*0.18}" y="${y(p.pdz)}" width="${bw*0.64}" height="${Hh-padB-y(p.pdz)}" rx="2" fill="${last?'var(--bad-text)':'#a5473f'}"/>`;
+    g+=`<rect x="${padL+slot*i}" y="0" width="${slot}" height="${Hh}" fill="transparent" data-tip="${pad(p.d.d)}.${pad(p.d.m+1)}.${p.d.y}<br>ДЗ ${p.dz?fmtM(p.dz):'—'}<br>ПДЗ ${fmtM(p.pdz)}"/>`;
+    const showLbl = n<=14 || i%Math.ceil(n/12)===0 || last;
+    if(showLbl) g+=`<text x="${x+bw/2}" y="${Hh-fs*0.5}" text-anchor="middle" font-size="${fs*0.85}" fill="${last?'#fff':'var(--text-muted)'}">${pad(p.d.d)}.${pad(p.d.m+1)}</text>`;
+  });
+  const L=pts[n-1], xl=padL+slot*(n-1)+slot/2;
+  g+=`<text x="${Math.min(xl,W-4)}" y="${y(L.dz||L.pdz)-fs*0.5}" text-anchor="end" font-size="${fs}" font-weight="700" fill="#fff">ДЗ ${fmtM(L.dz)}</text>`;
+  g+=`<text x="${Math.min(xl,W-4)}" y="${y(L.pdz)-fs*0.4}" text-anchor="end" font-size="${fs}" font-weight="700" fill="var(--bad-text)">ПДЗ ${fmtM(L.pdz)}</text>`;
+  const mx=pts.reduce((a,p)=>p.pdz>a.pdz?p:a,pts[0]);
+  g+=`<text x="${padL}" y="${fs}" font-size="${fs*0.85}" fill="var(--text-muted)"><tspan fill="#8a827e">■</tspan> ДЗ  <tspan fill="#c4544a">■</tspan> ПДЗ · пик ПДЗ ${fmtM(mx.pdz)} (${pad(mx.d.d)}.${pad(mx.d.m+1)})</text>`;
+  g+=`<line x1="${padL}" x2="${W-padR}" y1="${Hh-padB}" y2="${Hh-padB}" stroke="var(--border)"/>`;
+  svg.innerHTML=g;
+}
 /* ---------- экраны, автопрокрутка ---------- */
 function show(i){
   screen=(i+SCREENS.length)%SCREENS.length; rotT0=Date.now();
@@ -1196,7 +1647,11 @@ document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>show(+t.dataset.s));
 $('mPrev').onclick=()=>{const i=DATA.findIndex(d=>d.key===sel); if(i>0){sel=DATA[i-1].key; render();}};
 $('mNext').onclick=()=>{const i=DATA.findIndex(d=>d.key===sel); if(i<DATA.length-1){sel=DATA[i+1].key; render();}};
 $('btnRefresh').onclick=()=>refresh(true);
-document.querySelectorAll('#qBox button').forEach(b=>b.onclick=()=>{ const q=+b.dataset.q; selQ=(q===periodInfo().qNow)?null:q; rotT0=Date.now(); render(); });
+document.querySelectorAll('#qBox button').forEach(b=>b.onclick=()=>{
+  rotT0=Date.now();
+  if(SCREENS[screen].focus){ focusQ=b.dataset.q==='y'?null:+b.dataset.q; render(); return; }
+  if(b.dataset.q==='y') return;
+  const q=+b.dataset.q; selQ=(q===periodInfo().qNow)?null:q; render(); });
 function togglePause(){ paused=!paused; rotT0=Date.now(); const b=$('btnPause'); b.textContent=paused?'▶ Листать':'⏸ Пауза'; b.classList.toggle('on',paused); lsSet('panel.paused',paused); }
 $('btnPause').onclick=togglePause;
 if(lsGet('panel.paused',false)) togglePause();
@@ -1223,13 +1678,14 @@ function nextRefreshAt(from){
   if(t<=from) t+=864e5;
   return t;
 }
-let busy=false, salesErr='';
+let busy=false, salesErr='', DZ=null, dzErr='';
 async function refresh(){
   if(CODE!==null){ const c=await currentCode(); if(c!==CODE){ CODE=c; if(lsGet('panel.key',null)!==codeHash(c)){ lsSet('panel.key',null); location.reload(); return; } } }
   if(busy) return; busy=true;
   $('btnRefresh').textContent='⟳ Загрузка…';
   const warns=[];
   const salesP=loadSales().then(v=>({v}),e=>({e}));
+  const dzP=loadDZ().then(v=>({v}),e=>({e}));
   try{
     const data=await loadMeetings();
     const wasLatest=!DATA||sel===DATA[DATA.length-1].key;
@@ -1237,8 +1693,9 @@ async function refresh(){
     if(wasLatest||!DATA.some(d=>d.key===sel)) sel=DATA[DATA.length-1].key;
   }catch(err){ console.error(err); warns.push('встречи: '+err.message); }
   { const r=await salesP; if(r.v){ SALES=r.v; salesErr=''; } else { console.error(r.e); salesErr=r.e.message; warns.push('план/факт: '+r.e.message); } }
+  { const r=await dzP; if(r.v){ DZ=r.v; dzErr=''; } else { console.error(r.e); dzErr=r.e.message; } }
   if(!warns.length || (DATA&&SALES)){ lastOk=Date.now(); }
-  lsSet('panel.cache4',{t:lastOk,data:DATA,sales:SALES});
+  lsSet('panel.cache4',{t:lastOk,data:DATA,sales:SALES,dz:DZ});
   if(!warns.length){ nextAt=nextRefreshAt(Date.now()); $('fWarn').textContent=SALES&&SALES.notes&&SALES.notes.length?'⚠ Оплаты: '+SALES.notes.join('; '):''; }
   else { nextAt=Date.now()+15*60e3; $('fWarn').textContent=`⚠ Не удалось обновить (${warns.join('; ')}). Повтор в ${fmtDT(nextAt).slice(6)}`; }
   if(DATA||SALES) $('overlay').classList.add('hidden');
@@ -1279,7 +1736,7 @@ async function unlock(){
 (async function start(){
   await unlock();
   const c=lsGet('panel.cache4',null);
-  if(c&&(c.data||c.sales)){ DATA=c.data; SALES=c.sales; lastOk=c.t; if(DATA) sel=DATA[DATA.length-1].key; $('overlay').classList.add('hidden'); render(); }
+  if(c&&(c.data||c.sales)){ DATA=c.data; SALES=c.sales; DZ=c.dz||null; lastOk=c.t; if(DATA) sel=DATA[DATA.length-1].key; $('overlay').classList.add('hidden'); render(); }
   refresh();
 })();
 </script>
