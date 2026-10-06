@@ -147,6 +147,12 @@ main{flex:1 1 auto;min-height:0;position:relative}
 .amt{display:flex;flex-direction:column;line-height:1.15;font-variant-numeric:tabular-nums;white-space:nowrap}
 .amt b{font-size:2vh}
 .amt span{font-size:1.4vh;color:var(--text-muted)}
+.qbox{display:flex;align-items:center;gap:2px;background:var(--surface-2);border:1px solid var(--border);border-radius:999px;padding:3px}
+.qbox.off{display:none}
+.qbox button{background:none;border:0;border-radius:999px;cursor:pointer;font-size:1.55vh;padding:.45vh .8vw;color:var(--text-secondary);white-space:nowrap}
+.qbox button.on{background:var(--accent);color:#272727;font-weight:700}
+.qbox button.now:not(.on){color:var(--text-primary);text-decoration:underline;text-underline-offset:3px}
+body.mobile .qbox button{font-size:13px;padding:6px 10px}
 #btnPause.on{background:var(--accent-bright);color:#fff;border-color:var(--accent-bright)}
 .pct.done{color:#fff}
 .mchart{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
@@ -346,6 +352,7 @@ body.mobile .row .who .nm,body.mobile .arow .who .nm{flex:0 1 auto}
     <button id="mNext" aria-label="Следующий месяц">›</button>
   </div>
   <button class="iconbtn" id="btnPause" title="Остановить / запустить автоматическое перелистывание (Пробел)">⏸ Пауза</button>
+  <div class="qbox" id="qBox" role="group" aria-label="Квартал"><button data-q="0">1 кв</button><button data-q="1">2 кв</button><button data-q="2">3 кв</button><button data-q="3">4 кв</button></div>
   <button class="iconbtn" id="btnRefresh" title="Обновить сейчас (R)">⟳ Обновить</button>
 </div>
 
@@ -749,9 +756,10 @@ async function loadMeetings(){
 }
 async function loadSales(){
   const T=todayMSK(), q=Math.floor(T.m/3);
-  const qTab=CONFIG.PAY_Q_TAB.replace('{q}',q+1).replace('{y}',T.y), yTab=CONFIG.PAY_Y_TAB.replace('{y}',T.y);
-  const [payQRows, payYRows, shipRows, planRows]=await Promise.all([
-    fetchRows(qTab), fetchRows(yTab), fetchRows(CONFIG.SHIP_TAB), fetchRows(CONFIG.PLAN_GID, CONFIG.PLAN_SHEET_ID)]);
+  const qTabs=[0,1,2,3].map(k=>CONFIG.PAY_Q_TAB.replace('{q}',k+1).replace('{y}',T.y)), yTab=CONFIG.PAY_Y_TAB.replace('{y}',T.y);
+  const [payYRows, shipRows, planRows, ...payQRowsAll]=await Promise.all([
+    fetchRows(yTab), fetchRows(CONFIG.SHIP_TAB), fetchRows(CONFIG.PLAN_GID, CONFIG.PLAN_SHEET_ID),
+    ...qTabs.map(t=>fetchRows(t).catch(()=>[]))]);
   if(!is1CRows(shipRows)) throw new Error('вкладка отгрузок (1С) не найдена или пустая — проверьте SHIP_TAB в настройках');
   const notes=[];
   // оплаты: проверяем, что это нужный лист и период в шапке отчёта совпадает с кварталом / годом
@@ -763,10 +771,16 @@ async function loadSales(){
     return {...r, tab};
   };
   const payY=checkPay(payYRows, yTab, {y:T.y,m:0}, 'года');
-  const payQ=(sig(payQRows)===sig(payYRows) && payQRows.length && !(payY&&payY.from.m===3*q))
-    ? (notes.push(`лист «${qTab}» совпадает с годовым — загрузите в него отчёт за квартал`), null)
-    : checkPay(payQRows, qTab, {y:T.y,m:3*q}, 'квартала');
-  return {payQ, payY, qTab, yTab, notes, ship:parse1C(shipRows), plan:parsePlan(planRows)};
+  // кварталы: «Оплаты 1кв 2026» … «Оплаты 4кв 2026». О проблемах сообщаем только для уже начавшихся кварталов
+  const payQs=qTabs.map((tab,k)=>{
+    const rows=payQRowsAll[k]; const started=k<=q; const n0=notes.length;
+    let r=null;
+    if(rows.length && sig(rows)===sig(payYRows) && k>0) notes.push(`лист «${tab}» совпадает с годовым — загрузите в него отчёт за квартал`);
+    else r=checkPay(rows, tab, {y:T.y,m:3*k}, 'квартала');
+    if(!started) notes.length=n0;
+    return r;
+  });
+  return {payQs, payY, qTabs, yTab, notes, ship:parse1C(shipRows), plan:parsePlan(planRows)};
 }
 
 /* ---------- состояние ---------- */
@@ -796,6 +810,8 @@ function render(){
   const S=SCREENS[screen];
   $('title').textContent=S.title;
   $('monthBox').classList.toggle('off',!S.month);
+  $('qBox').classList.toggle('off',!S.sales);
+  { const P0=periodInfo(); document.querySelectorAll('#qBox button').forEach(b=>{ b.classList.toggle('on',+b.dataset.q===P0.q); b.classList.toggle('now',+b.dataset.q===P0.qNow); }); }
   if(S.sales){ renderSalesScreen(); return; }
   if(!DATA){ return; }
   const idx=DATA.findIndex(d=>d.key===sel); const mo=DATA[idx]; const prev=DATA[idx-1];
@@ -932,10 +948,12 @@ function renderOrgs(mo){
 
 /* ---------- план / факт ---------- */
 function todayMSK(){ const n=new Date(Date.now()+MSK); return {y:n.getUTCFullYear(), m:n.getUTCMonth(), d:n.getUTCDate()}; }
+let selQ=null;   // выбранный квартал на экранах продаж (null — текущий)
 function periodInfo(){
   const t=todayMSK();
-  const q=Math.floor(t.m/3);
-  return {...t, q, qMonths:[3*q,3*q+1,3*q+2], yMonths:[0,1,2,3,4,5,6,7,8,9,10,11]};
+  const qNow=Math.floor(t.m/3);
+  const q=selQ==null?qNow:selQ;
+  return {...t, q, qNow, qMonths:[3*q,3*q+1,3*q+2], yMonths:[0,1,2,3,4,5,6,7,8,9,10,11]};
 }
 /* план «на сегодня»: полные прошедшие месяцы + доля текущего месяца по дням */
 function paceOf(v, months, P){
@@ -995,7 +1013,7 @@ function renderSalesScreen(){
   const dd=a=>a?`${pad(a.d)}.${pad(a.m+1)}`:'—';
   const S=SALES;
   $('subtitle').textContent= screen===3
-    ? `${qLabel(P)} — лист «${S.qTab}» на ${dd(S.payQ&&S.payQ.asOf)} · ${P.y} год — лист «${S.yTab}» на ${dd(S.payY&&S.payY.asOf)} · суммы с НДС`
+    ? `${qLabel(P)} — лист «${S.qTabs[P.q]}» на ${dd(S.payQs[P.q]&&S.payQs[P.q].asOf)} · ${P.y} год — лист «${S.yTab}» на ${dd(S.payY&&S.payY.asOf)} · суммы с НДС`
     : `${qLabel(P)} и ${P.y} год · отгрузки 1С на ${dd(S.ship.asOf)} · суммы с НДС`;
   renderSalesTiles(P);
   if(screen===3) renderMgrBoard('pay', $('payBoard'), P);
@@ -1013,9 +1031,9 @@ function tilePF(label, fact, plan, pace, missing){
 }
 function renderSalesTiles(P){
   const c=SALES.plan.company;
-  const sf=SALES.ship.total, S=SALES, dS=S.ship.asOf||P;
+  const sf=SALES.ship.total, S=SALES, dS=S.ship.asOf||P, pq=S.payQs[P.q];
   $('tiles').innerHTML=
-    tilePF(`Компания · оплаты · ${Q_NAMES[P.q]} квартал`, S.payQ?S.payQ.tot:null, sumM(c.pay,P.qMonths), S.payQ?paceOf(c.pay||[],P.qMonths,S.payQ.asOf):0, `нет данных: лист «${S.qTab}»`)+
+    tilePF(`Компания · оплаты · ${Q_NAMES[P.q]} квартал`, pq?pq.tot:null, sumM(c.pay,P.qMonths), pq?paceOf(c.pay||[],P.qMonths,pq.asOf):0, `нет данных: лист «${S.qTabs[P.q]}»`)+
     tilePF(`Компания · оплаты · ${P.y} год`, S.payY?S.payY.tot:null, sumM(c.pay,P.yMonths), S.payY?paceOf(c.pay||[],P.yMonths,S.payY.asOf):0, `нет данных: лист «${S.yTab}»`)+
     tilePF(`Компания · отгрузки · ${Q_NAMES[P.q]} квартал`, sumM(sf,P.qMonths), sumM(c.ship,P.qMonths), paceOf(c.ship,P.qMonths,dS))+
     tilePF(`Компания · отгрузки · ${P.y} год`, sumM(sf,P.yMonths), sumM(c.ship,P.yMonths), paceOf(c.ship,P.yMonths,dS));
@@ -1025,7 +1043,8 @@ function renderMgrBoard(kind, el, P){
   // факт: по оплатам — итоги менеджеров из квартального и годового листов; по отгрузкам — месяцы из «Отгрузки 2026»
   const S=SALES, totMap=src=>{ const m=new Map(); if(src) for(const x of src.managers) m.set(x.key,(m.get(x.key)||0)+(x.tot||0)); return m; };
   let fq, fy, dQ, dY;
-  if(kind==='pay'){ fq=S.payQ?totMap(S.payQ):null; fy=S.payY?totMap(S.payY):null; dQ=S.payQ&&S.payQ.asOf; dY=S.payY&&S.payY.asOf; }
+  const pq=S.payQs[P.q];
+  if(kind==='pay'){ fq=pq?totMap(pq):null; fy=S.payY?totMap(S.payY):null; dQ=pq&&pq.asOf; dY=S.payY&&S.payY.asOf; }
   else { const mm=factByKey(S.ship); fq=new Map([...mm].map(([k,v])=>[k,sumM(v,P.qMonths)])); fy=new Map([...mm].map(([k,v])=>[k,sumM(v,P.yMonths)])); dQ=dY=S.ship.asOf||P; }
   const used=new Set();
   const list=SALES.plan.managers.filter(m=>m[planKey] && sum(m[planKey])>0).map(m=>{
@@ -1043,7 +1062,7 @@ function renderMgrBoard(kind, el, P){
   if(fy) for(const [k,v] of fy) if(!used.has(k) && v){ oY+=v; otherNames.add(k); }
   const word=kind==='pay'?'Оплаты':'Отгрузки';
   const amt=(f,p)=>`<div class="amt"><b>${f==null?'—':fmtM(f)}</b><span>из ${fmtM(p)}</span></div>`;
-  const noteQ=kind==='pay'&&!fq?`нет данных: лист «${S.qTab}»`:'', noteY=kind==='pay'&&!fy?`нет данных: лист «${S.yTab}»`:'';
+  const noteQ=kind==='pay'&&!fq?`нет данных: лист «${S.qTabs[P.q]}»`:'', noteY=kind==='pay'&&!fy?`нет данных: лист «${S.yTab}»`:'';
   el.innerHTML=`<div class="shead"><span>#</span><span>Менеджер</span><span style="grid-column:3/6"><b>${qLabel(P)}</b>: факт из плана${noteQ?` · <span style="color:var(--warning)">⚠ ${esc(noteQ)}</span>`:''}</span><span style="grid-column:6/9"><b>${P.y} год</b>: факт из плана${noteY?` · <span style="color:var(--warning)">⚠ ${esc(noteY)}</span>`:''}</span></div>
     <div class="srows">${list.map(r=>{ if(!r.lead) rk++; return (r===firstLead?LEADER_SEP():'')+`<div class="srow${r.lead?' lead':''}">
       <div class="rank">${r.lead?'':medalHtml(rk)}</div>
@@ -1160,6 +1179,7 @@ document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>show(+t.dataset.s));
 $('mPrev').onclick=()=>{const i=DATA.findIndex(d=>d.key===sel); if(i>0){sel=DATA[i-1].key; render();}};
 $('mNext').onclick=()=>{const i=DATA.findIndex(d=>d.key===sel); if(i<DATA.length-1){sel=DATA[i+1].key; render();}};
 $('btnRefresh').onclick=()=>refresh(true);
+document.querySelectorAll('#qBox button').forEach(b=>b.onclick=()=>{ const q=+b.dataset.q; selQ=(q===periodInfo().qNow)?null:q; rotT0=Date.now(); render(); });
 function togglePause(){ paused=!paused; rotT0=Date.now(); const b=$('btnPause'); b.textContent=paused?'▶ Листать':'⏸ Пауза'; b.classList.toggle('on',paused); lsSet('panel.paused',paused); }
 $('btnPause').onclick=togglePause;
 if(lsGet('panel.paused',false)) togglePause();
@@ -1201,7 +1221,7 @@ async function refresh(){
   }catch(err){ console.error(err); warns.push('встречи: '+err.message); }
   { const r=await salesP; if(r.v){ SALES=r.v; salesErr=''; } else { console.error(r.e); salesErr=r.e.message; warns.push('план/факт: '+r.e.message); } }
   if(!warns.length || (DATA&&SALES)){ lastOk=Date.now(); }
-  lsSet('panel.cache2',{t:lastOk,data:DATA,sales:SALES});
+  lsSet('panel.cache3',{t:lastOk,data:DATA,sales:SALES});
   if(!warns.length){ nextAt=nextRefreshAt(Date.now()); $('fWarn').textContent=SALES&&SALES.notes&&SALES.notes.length?'⚠ Оплаты: '+SALES.notes.join('; '):''; }
   else { nextAt=Date.now()+15*60e3; $('fWarn').textContent=`⚠ Не удалось обновить (${warns.join('; ')}). Повтор в ${fmtDT(nextAt).slice(6)}`; }
   if(DATA||SALES) $('overlay').classList.add('hidden');
@@ -1241,7 +1261,7 @@ async function unlock(){
 }
 (async function start(){
   await unlock();
-  const c=lsGet('panel.cache2',null);
+  const c=lsGet('panel.cache3',null);
   if(c&&(c.data||c.sales)){ DATA=c.data; SALES=c.sales; lastOk=c.t; if(DATA) sel=DATA[DATA.length-1].key; $('overlay').classList.add('hidden'); render(); }
   refresh();
 })();
