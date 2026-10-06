@@ -453,6 +453,10 @@ const CONFIG = {
   SHOW_ZERO_WITHOUT_PLAN: false,
   MAX_CHIPS: 20,
 
+  /* Сегменты 1С, которые НЕ входят в факт менеджеров и итоги компании (как и в плане).
+     Они учитываются только у руководителя направления, отвечающего за них (оборудование — Халиков). */
+  EXCLUDED_SEGMENTS: ['ОБОРУДОВАНИЕ','РОБОТЫ','ПРОМЫШЛЕННЫЕ РОБОТЫ','РОБОТОТЕХНИКА'],
+
   /* Какие сегменты 1С относятся к номенклатурным направлениям плана.
      Слева — фрагмент названия направления в плане, справа — сегменты из отчёта 1С. */
   CATEGORY_MAP: [
@@ -621,16 +625,29 @@ function parse1C(rows){
       const sk=normTxt(name)||'БЕЗ СЕГМЕНТА';
       curC.segs.push({name:sk, v}); cRem-=tot;
       curM.seg[sk]=(curM.seg[sk]||new Array(12).fill(0)).map((x,k)=>x+v[k]);
+      curM.segTot[sk]=(curM.segTot[sk]||0)+tot;
       segTotals[sk]=(segTotals[sk]||new Array(12).fill(0)).map((x,k)=>x+v[k]);
       continue;
     }
     if(curM && Math.abs(mRem)>eps){ curC={name, v, segs:[]}; curM.clients.push(curC); cRem=tot; mRem-=tot; continue; }
-    curM={name:rename(name), key:personKey(rename(name)), v, tot, clients:[], seg:{}}; managers.push(curM); mRem=tot; curC=null; cRem=0;
+    curM={name:rename(name), key:personKey(rename(name)), v, tot, clients:[], seg:{}, segTot:{}}; managers.push(curM); mRem=tot; curC=null; cRem=0;
   }
-  const total=vals(tr);
+  let total=vals(tr), grand=num(tr[totCol])||0;
   const check=sum(managers.map(m=>sum(m.v)));
   if(Math.abs(check-sum(total))>100) console.warn('1С: сумма по менеджерам',check,'≠ итого',sum(total));
-  return {managers, segTotals, total, tot:num(tr[totCol])||0, asOf, from, nMonths:monthCols.length};
+  // убираем из факта сегменты, которые не входят в план (оборудование, роботы)
+  const EX=new Set((CONFIG.EXCLUDED_SEGMENTS||[]).map(normTxt));
+  let exTot=0; const exV=new Array(12).fill(0);
+  for(const m of managers){
+    m.excluded=0;
+    for(const sk of Object.keys(m.segTot)) if(EX.has(sk)){
+      m.excluded+=m.segTot[sk]; m.tot-=m.segTot[sk];
+      if(m.seg[sk]) m.seg[sk].forEach((x,k)=>{ m.v[k]-=x; exV[k]+=x; });
+    }
+    exTot+=m.excluded;
+  }
+  total=total.map((x,k)=>x-exV[k]); grand-=exTot;
+  return {managers, segTotals, total, tot:grand, excluded:exTot, asOf, from, nMonths:monthCols.length};
 }
 
 /* ---------- ПЛАН («ПЛАН ПРОДАЖ 2026») ----------
@@ -1013,8 +1030,8 @@ function renderSalesScreen(){
   const dd=a=>a?`${pad(a.d)}.${pad(a.m+1)}`:'—';
   const S=SALES;
   $('subtitle').textContent= screen===3
-    ? `${qLabel(P)} — лист «${S.qTabs[P.q]}» на ${dd(S.payQs[P.q]&&S.payQs[P.q].asOf)} · ${P.y} год — лист «${S.yTab}» на ${dd(S.payY&&S.payY.asOf)} · суммы с НДС`
-    : `${qLabel(P)} и ${P.y} год · отгрузки 1С на ${dd(S.ship.asOf)} · суммы с НДС`;
+    ? `${qLabel(P)} — лист «${S.qTabs[P.q]}» на ${dd(S.payQs[P.q]&&S.payQs[P.q].asOf)} · ${P.y} год — лист «${S.yTab}» на ${dd(S.payY&&S.payY.asOf)} · суммы с НДС · без оборудования и роботов`
+    : `${qLabel(P)} и ${P.y} год · отгрузки 1С на ${dd(S.ship.asOf)} · суммы с НДС`+(screen===4?' · без оборудования и роботов':'');
   renderSalesTiles(P);
   if(screen===3) renderMgrBoard('pay', $('payBoard'), P);
   if(screen===4) renderMgrBoard('ship', $('shipBoard'), P);
@@ -1221,7 +1238,7 @@ async function refresh(){
   }catch(err){ console.error(err); warns.push('встречи: '+err.message); }
   { const r=await salesP; if(r.v){ SALES=r.v; salesErr=''; } else { console.error(r.e); salesErr=r.e.message; warns.push('план/факт: '+r.e.message); } }
   if(!warns.length || (DATA&&SALES)){ lastOk=Date.now(); }
-  lsSet('panel.cache3',{t:lastOk,data:DATA,sales:SALES});
+  lsSet('panel.cache4',{t:lastOk,data:DATA,sales:SALES});
   if(!warns.length){ nextAt=nextRefreshAt(Date.now()); $('fWarn').textContent=SALES&&SALES.notes&&SALES.notes.length?'⚠ Оплаты: '+SALES.notes.join('; '):''; }
   else { nextAt=Date.now()+15*60e3; $('fWarn').textContent=`⚠ Не удалось обновить (${warns.join('; ')}). Повтор в ${fmtDT(nextAt).slice(6)}`; }
   if(DATA||SALES) $('overlay').classList.add('hidden');
@@ -1261,7 +1278,7 @@ async function unlock(){
 }
 (async function start(){
   await unlock();
-  const c=lsGet('panel.cache3',null);
+  const c=lsGet('panel.cache4',null);
   if(c&&(c.data||c.sales)){ DATA=c.data; SALES=c.sales; lastOk=c.t; if(DATA) sel=DATA[DATA.length-1].key; $('overlay').classList.add('hidden'); render(); }
   refresh();
 })();
