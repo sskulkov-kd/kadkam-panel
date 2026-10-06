@@ -381,10 +381,10 @@ body.mobile .focus td.nm{position:sticky;left:0;background:var(--surface-1);z-in
 .dz-mgr .dh{font-size:1.3vh;color:var(--text-muted);padding:0 .3vw .6vh;border-bottom:1px solid var(--border)}
 .dz-mgr .dh span:nth-child(n+3){text-align:right}
 .dz-mgr .rows{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
-.dz-mgr .dr{flex:1 1 0;max-height:6.2vh;border-bottom:1px solid var(--border);padding:0 .3vw}
-.dz-mgr .dr .nm{font-size:1.75vh;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dz-mgr .dr{flex:1 1 0;max-height:8vh;border-bottom:1px solid var(--border);padding:0 .3vw}
+.dz-mgr .dr .nm{font-size:2vh;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dz-mgr .dr.lead .nm{color:var(--text-secondary);font-weight:500}
-.dz-mgr .dr .v{font-size:1.65vh;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.dz-mgr .dr .v{font-size:1.9vh;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .dz-mgr .dr .v.p{font-weight:700}
 .dz-mgr .dr .v small{display:block;font-size:1.15vh;color:var(--text-muted);font-weight:400}
 .dz-mgr .sep{font-size:1.2vh;color:var(--text-muted);letter-spacing:.06em;text-transform:uppercase;padding:.6vh .3vw .2vh}
@@ -574,6 +574,7 @@ const CONFIG = {
   DZ_KPDZ_WARN: 0.03,     // Кпдз выше — оранжевый
   DZ_KPDZ_BAD: 0.10,      // Кпдз выше — красный
   DZ_TOP_CLIENTS: 12,
+  DZ_OTHER: ['Егоров Денис','Токарь Илья','Беляев Андрей','Прошина Мария'],   // на листе ДЗ/ПДЗ — одной строкой «Прочие»
   DZ_EXCLUDE: [/МЕТИЗ-ЭКСПЕРТ/i, /ТОТАЛ-ГРУПП/i],   // не показывать: выведены из ПДЗ (исполнительный лист)
   DZ_MONTH_RESULT_DAY: 7, // файл «итогов месяца» — первый файл месяца, датированный не позже этого числа
   /* исключения: долг по организации+контрагенту записывать другому менеджеру */
@@ -1563,18 +1564,28 @@ function renderDZ(){
   // менеджеры
   const list=D.managers.filter(m=>!isHidden(m.name)&&(m.dz>0.5||m.pdz>0.5||m.sales>0.5)).map(m=>({...m,kp:m.sales?m.pdz/m.sales:null,qa:QQ?QQ.mgr(m.key):null}))
     .sort((a,b)=>b.pdz-a.pdz||(b.kp||0)-(a.kp||0)||b.dz-a.dz||(b.sales||0)-(a.sales||0));
+  // «Прочие»: перечисленные в DZ_OTHER — одной строкой внизу
+  const isOther=m=>(CONFIG.DZ_OTHER||[]).some(x=>personKey(x)===m.key||personKey(rename(x))===m.key);
+  const others=list.filter(isOther);
+  for(let i=list.length-1;i>=0;i--) if(isOther(list[i])) list.splice(i,1);
+  if(others.length){
+    const o={key:'__other', name:'Прочие ('+others.length+')', other:others, sales:sum(others.map(m=>m.sales||0)), dz:sum(others.map(m=>m.dz)), pdz:sum(others.map(m=>m.pdz)), ok:sum(others.map(m=>m.ok)), n:sum(others.map(m=>m.n)), b:DZ_BUCKETS.map((_,j)=>sum(others.map(m=>m.b[j])))};
+    o.kp=o.sales?o.pdz/o.sales:null;
+    const qs=others.map(m=>m.qa).filter(Boolean); o.qa=qs.length?{k:sum(qs.map(q=>q.k))/qs.length, parts:[]}:null;
+    list.push(o);
+  }
   const maxDz=Math.max(1,...list.map(m=>m.dz));
   const mRow=m=>{
     const pm=prev&&prev.mgr[m.key];
-    const tip=`${m.name}<br>ДЗ ${fmtM(m.dz)} · не просрочено ${fmtM(m.ok)}<br>`+DZ_BUCKETS.map((b,j)=>m.b[j]>0.5?`просрочка ${b[0]}: ${fmtM(m.b[j])}`:'').filter(Boolean).join('<br>')+(m.sales!=null?`<br>продажи 12 мес.: ${fmtM(m.sales)}`:'');
+    const tip=(m.other?m.other.map(x=>`${x.name}: продажи ${fmtM(x.sales||0)}, ДЗ ${fmtM(x.dz)}, ПДЗ ${fmtM(x.pdz)}`).join('<br>')+'<br>':'')+`${m.name}<br>ДЗ ${fmtM(m.dz)} · не просрочено ${fmtM(m.ok)}<br>`+DZ_BUCKETS.map((b,j)=>m.b[j]>0.5?`просрочка ${b[0]}: ${fmtM(m.b[j])}`:'').filter(Boolean).join('<br>')+(m.sales!=null?`<br>продажи 12 мес.: ${fmtM(m.sales)}`:'');
     return `<div class="dr" data-tip="${esc(tip)}">
-      <div class="nm">${esc(shortName(m.name))}</div>
+      <div class="nm"${m.other?' style="color:var(--text-secondary);font-weight:500"':''}>${esc(m.other?m.name:shortName(m.name))}</div>
       ${dzBar(m.ok,m.b,maxDz,m.pdz)}
       <div class="v">${m.sales!=null?fmtM(m.sales):'—'}</div>
       <div class="v">${m.dz>0.5?fmtM(m.dz):'0'}<small>${m.n?m.n+' контр.':''}</small></div>
       <div class="v p" style="${m.pdz>0.5?'color:var(--bad-text)':'color:var(--text-muted)'}">${m.pdz>0.5?fmtM(m.pdz):'0'}<small>${pm&&(m.pdz>0.5||pm.pdz>0.5)?dzDelta(m.pdz,pm.pdz):''}</small></div>
       <div class="v"><span class="kp ${kpCls(m.kp)}">${pct1(m.kp)}</span></div>
-      <div class="v" data-tip="${esc(m.qa?qTip(m.name+' · Кпдз по итогам '+QL,m.qa):'нет файлов итогов месяца')}"><span class="kp ${kpCls(m.qa&&m.qa.k)}">${m.qa?pct1(m.qa.k):'—'}</span></div></div>`;
+      <div class="v" data-tip="${esc(m.other?'':m.qa?qTip(m.name+' · Кпдз по итогам '+QL,m.qa):'нет файлов итогов месяца')}"><span class="kp ${kpCls(m.qa&&m.qa.k)}">${m.qa?pct1(m.qa.k):'—'}</span></div></div>`;
   };
   const legend=`<div class="dz-legend"><span><i style="background:#5d5a58"></i>не просрочено</span>${DZ_BUCKETS.map(b=>`<span><i style="background:${b[2]}"></i>просрочка ${b[0]}</span>`).join('')}<span><i style="background:repeating-linear-gradient(45deg,#c4433a 0 2px,#6b2b27 2px 4px)"></i>срок не указан</span></div>`;
   // крупнейшая просрочка
