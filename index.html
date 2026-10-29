@@ -121,6 +121,9 @@ main{flex:1 1 auto;min-height:0;position:relative}
 .heat td.nm{text-align:left;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:.4vw}
 .heat td.tot{font-weight:700;background:var(--surface-2)}
 .heat td.cur{outline:2px solid var(--text-secondary);outline-offset:-2px}
+.hrow .hnote{font-size:1.25vh;color:var(--text-muted);margin-left:auto;margin-right:1.5vw}
+body.mobile .hrow .hnote{font-size:11px;display:block;margin:4px 0}
+.heat tr.lsep td{height:.9vh;padding:0;background:none;border-top:1px solid var(--border)}
 .legend-seq{display:flex;align-items:center;gap:.5vw;font-size:1.3vh;color:var(--text-muted);margin-left:auto}
 .legend-seq i{display:block;width:10vw;height:1vh;border-radius:2px;background:linear-gradient(90deg,#2d2b2b,#c4683e)}
 .hrow{display:flex;align-items:baseline;gap:1vw}
@@ -279,7 +282,7 @@ body.mobile .planmark::after{display:none}
 body.mobile .dyn-top{height:190px}
 body.mobile .dyn-top svg{height:150px;flex:none}
 body.mobile #heat{overflow-x:auto}
-body.mobile .heat table{min-width:560px;height:auto}
+body.mobile .heat table{min-width:720px;height:auto}
 body.mobile .heat td,body.mobile .heat th{font-size:12px;padding:4px 2px}
 body.mobile .legend-seq{font-size:11px}
 body.mobile .legend-seq i{width:60px}
@@ -458,7 +461,7 @@ body.mobile .dz-legend{font-size:11px}
   <!-- 1. Динамика встреч -->
   <section class="screen">
     <div class="panel dyn-top"><h2>Встречи всей команды по месяцам</h2><svg id="teamChart" role="img" aria-label="Встречи команды по месяцам"></svg></div>
-    <div class="panel heat"><div class="hrow"><h2>Встречи каждого сотрудника по месяцам</h2><div class="legend-seq">меньше<i></i>больше</div></div><div style="flex:1 1 auto;min-height:0" id="heat"></div></div>
+    <div class="panel heat"><div class="hrow"><h2>Встречи каждого сотрудника по месяцам</h2><span class="hnote">«На встречах» — доля рабочих дней с 2026 г.: 1 встреча = 1 день в разъездах, рабочие дни по производственному календарю РФ</span><div class="legend-seq">меньше<i></i>больше</div></div><div style="flex:1 1 auto;min-height:0" id="heat"></div></div>
   </section>
   <!-- 2. Предприятия -->
   <section class="screen">
@@ -1094,22 +1097,40 @@ function heatColor(v,max){
   const c=a.map((x,i)=>Math.round(x+(b[i]-x)*t));
   return {bg:`rgb(${c})`, fg:'#ffffff'};
 }
+/* рабочие дни по производственному календарю РФ (пятидневка); 1 встреча = 1 день в разъездах */
+const HOLIDAYS={2026:['01-01','01-02','01-05','01-06','01-07','01-08','01-09','02-23','03-09','05-01','05-11','06-12','11-04','12-31']};
+const WORK_SAT={2026:[]};
+function workDays(y,m,upto){
+  const last=lastDay(y,m), lim=Math.min(upto||last,last), hol=HOLIDAYS[y]||[], ws=WORK_SAT[y]||[]; let n=0;
+  for(let d=1;d<=lim;d++){ const w=new Date(Date.UTC(y,m,d)).getUTCDay(), k=pad(m+1)+'-'+pad(d);
+    if(w===0||w===6){ if(ws.includes(k)) n++; continue; } if(!hol.includes(k)) n++; }
+  return n;
+}
+function monthWD(d){ const t=todayMSK(); if(d.y>t.y||(d.y===t.y&&d.m>t.m)) return 0; return workDays(d.y,d.m,(d.y===t.y&&d.m===t.m)?t.d:0); }
+const pctCol=x=>x>=0.4?'var(--good-text)':x>=0.25?'var(--warning)':'var(--bad-text)';
 function renderHeat(mo){
   const names=new Map();
   for(const d of DATA) for(const p of d.people) if(visible(p)) names.set(p.name,(names.get(p.name)||0)+p.fact);
   const rows=[...names].sort((a,b)=>(isLeader(a[0])-isLeader(b[0]))||b[1]-a[1]);
   const max=Math.max(1,...DATA.flatMap(d=>d.people.map(p=>p.fact)));
-  let h=`<table><colgroup><col style="width:17%">${DATA.map(()=>'<col>').join('')}<col style="width:8%"></colgroup><thead><tr><th class="nmh">Сотрудник</th>${DATA.map(d=>`<th>${MONTHS_SHORT[d.m]}</th>`).join('')}<th>Итого</th></tr></thead><tbody>`;
+  const WD=DATA.map(monthWD);
+  let h=`<table><colgroup><col style="width:15%">${DATA.map(()=>'<col>').join('')}<col style="width:5%"><col style="width:6.5%"><col style="width:6.5%"></colgroup><thead><tr><th class="nmh">Сотрудник</th>${DATA.map((d,i)=>`<th data-tip="${WD[i]} рабочих дней${d.y===todayMSK().y&&d.m===todayMSK().m?' по сегодня':''}">${MONTHS_SHORT[d.m]}</th>`).join('')}<th>Итого</th><th data-tip="Доля рабочих дней на встречах: 1 встреча = 1 день в разъездах">На встречах</th><th data-tip="Рабочих дней без встреч">В офисе, дн.</th></tr></thead><tbody>`;
+  let sepDone=false;
   for(const [n,tot] of rows){
+    if(isLeader(n)&&!sepDone){ sepDone=true; h+=`<tr class="lsep"><td colspan="${DATA.length+4}"></td></tr>`; }
     h+=`<tr><td class="nm">${esc(n)}</td>`;
-    for(const d of DATA){
+    let wd=0, days=0;
+    DATA.forEach((d,i)=>{
       const p=d.people.find(x=>x.name===n);
       const cur=d.key===mo.key?' cur':'';
-      if(!p){ h+=`<td class="${cur}" style="color:var(--text-muted)">·</td>`; continue; }
+      if(!p){ h+=`<td class="${cur}" style="color:var(--text-muted)">·</td>`; return; }
+      const dd=Math.min(p.fact,WD[i]); wd+=WD[i]; days+=dd;
+      const sh=WD[i]?dd/WD[i]:0;
       const c=heatColor(p.fact,max);
-      h+=`<td class="${cur}" style="background:${c.bg};color:${c.fg}" data-tip="${esc(n)} · ${mName(d)}: ${p.fact} встреч${p.plan?` (план ${p.plan})`:''}">${p.fact}</td>`;
-    }
-    h+=`<td class="tot">${tot}</td></tr>`;
+      h+=`<td class="${cur}" style="background:${c.bg};color:${c.fg}" data-tip="${esc(n)} · ${mName(d)}: ${p.fact} встреч${p.plan?` (план ${p.plan})`:''}<br>рабочих дней ${WD[i]}: на встречах ${dd} (${Math.round(sh*100)}%), в офисе ${WD[i]-dd}">${p.fact}</td>`;
+    });
+    const sh=wd?days/wd:0;
+    h+=`<td class="tot">${tot}</td><td class="tot" style="color:${pctCol(sh)}" data-tip="${days} дн. на встречах из ${wd} рабочих">${wd?Math.round(sh*100)+'%':'—'}</td><td class="tot" style="font-weight:600">${wd?wd-days:'—'}</td></tr>`;
   }
   $('heat').innerHTML=h+'</tbody></table>';
 }
