@@ -200,13 +200,17 @@ body.mobile .qbox button{font-size:13px;padding:6px 10px}
 .cats td.p{font-weight:700;color:var(--text-primary)}
 
 /* ---------- АКБ ---------- */
-.ahead,.arow{display:grid;grid-template-columns:4.2vh 25vw 6vw 15vw 1fr;align-items:center;column-gap:1vw}
+.ahead,.arow{display:grid;grid-template-columns:4.2vh 23vw 8vw 15vw 1fr;align-items:center;column-gap:1vw}
 .ahead{font-size:1.4vh;color:var(--text-muted);padding:0 .4vw .6vh;border-bottom:1px solid var(--border)}
 .arow{flex:1 1 auto;min-height:0;padding:.2vh .4vw;border-bottom:1px solid var(--surface-3);overflow:hidden}
 .arow:last-child{border-bottom:0}
 .acnt{display:flex;flex-direction:column;line-height:1.15}
-.acnt .n{font-size:2.6vh;font-weight:700;font-variant-numeric:tabular-nums}
+.acnt .n{font-size:2.6vh;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.acnt .n small.pl{font-size:1.6vh;font-weight:500;color:var(--text-muted)}
+.acnt .n small.pl.ok{color:#5fc463}
 
+.otd{margin-left:auto;text-decoration:none;color:var(--text-primary);font-weight:600}
+.otd + .mgmt{margin-left:.5vw}
 .mgmt{margin-left:auto;text-decoration:none;background:var(--accent);color:#272727;border-color:var(--accent);font-weight:600}
 footer{flex:0 0 auto;display:flex;gap:1.5vw;font-size:1.3vh;color:var(--text-muted);white-space:nowrap;overflow:hidden}
 footer .warn{color:var(--warning);overflow:hidden;text-overflow:ellipsis}
@@ -369,7 +373,21 @@ body.mobile .row .who .nm,body.mobile .arow .who .nm{flex:0 1 auto}
 .focus tr.oth.orange td.nm{color:#d9952f}
 .focus tr.brk td{border-top:1px solid var(--border)}
 .focus tr.brk td{padding-top:.3vh}
+.focus .fsw{display:flex;align-items:center;gap:.5vw;margin:0 0 .6vh}
+.focus .fsw button{background:var(--surface-2);border:1px solid var(--border);color:var(--text-secondary);border-radius:999px;padding:.35vh .9vw;font-size:1.45vh;cursor:pointer;font-family:inherit}
+.focus .fsw button.on{background:var(--accent);border-color:var(--accent);color:#272727;font-weight:700}
+.focus .fsw .fsn{margin-left:auto;color:var(--text-muted);font-size:1.2vh}
+.focus .ftw{flex:1 1 auto;min-height:0}
+.focus td.mk{padding:0 .1vw}
+.focus .mkp{display:inline-block;border-radius:999px;padding:.1vh .4vw;font-size:1.1vh;white-space:nowrap;font-weight:600;line-height:1.35}
+.focus .mkp.no{background:rgba(245,160,58,.16);color:#f5a03a;border:1px solid rgba(245,160,58,.45)}
+.focus .mkp.ok{background:rgba(76,175,80,.18);color:#5fc463;border:1px solid rgba(95,196,99,.5)}
+.focus .fcat{display:inline-block;font-size:1vh;font-weight:700;border-radius:3px;padding:0 .25vw;margin-left:.2vw;vertical-align:1px;background:var(--surface-3);color:var(--text-secondary)}
+.focus .fcat.cA{background:rgba(232,180,40,.22);color:var(--accent)}
 body.mobile .focus{overflow-x:auto;padding:8px}
+body.mobile .focus .fsw{flex-wrap:wrap;gap:6px;margin-bottom:8px} body.mobile .focus .fsw button{font-size:13px;padding:6px 12px} body.mobile .focus .fsw .fsn{font-size:11px;margin-left:0;width:100%}
+body.mobile .focus .mkp{font-size:11px;padding:2px 6px} body.mobile .focus .fcat{font-size:10px}
+body.mobile .otd{margin-left:auto}
 body.mobile .focus table{width:auto;height:auto;table-layout:auto}
 body.mobile .focus td.nm{min-width:150px;max-width:170px;white-space:normal;line-height:1.2}
 body.mobile .focus td.n{display:none}body.mobile .focus th:first-child{display:none}
@@ -433,6 +451,7 @@ body.mobile .dz-legend{font-size:11px}
     <h1 id="title">Встречи менеджеров с предприятиями</h1>
     <div class="sub" id="subtitle">Загрузка данных…</div>
   </div>
+  <a class="iconbtn otd" href="otdel.html" title="Статистика по каждому сотруднику отдела продаж">👥 Отдел продаж</a>
   <a class="iconbtn mgmt" href="rukovodstvo.html" title="Панель руководства — вход по отдельному паролю">🔒 Управление</a>
 </header>
 <div class="brandline"></div>
@@ -479,7 +498,7 @@ body.mobile .dz-legend{font-size:11px}
   <!-- 6. АКБ -->
   <section class="screen">
     <div class="panel board">
-      <div class="ahead"><span>#</span><span>Сотрудник</span><span>Клиентов</span><span>Объём продаж АКБ за 3 мес.</span><span>Клиенты (объём за 3 месяца)</span></div>
+      <div class="ahead"><span>#</span><span>Сотрудник</span><span>Клиентов / план</span><span>Объём продаж АКБ за 3 мес.</span><span>Клиенты (объём за 3 месяца)</span></div>
       <div class="rows" id="akbRows"></div>
     </div>
   </section>
@@ -586,39 +605,67 @@ const CONFIG = {
   DZ_REASSIGN: [
     {org:/ПРОМИНВЕСТ/i, client:/^РПЗ(\s|$)/i, mgr:'Кульков Сергей'}   // все отгрузки от Проминвеста идут от Кулькова
   ],
-  FOCUS_TOP: 12,
   FOCUS_VISIT_MONTHS: 3,
   FOCUS_RED_SALES: 1e6,   // наименование КРАСНЫМ, если отгрузки за год меньше этой суммы
   FOCUS_RED_VISITS: 3,    // наименование ОРАНЖЕВЫМ, если визитов закреплённого МОП за 3 месяца меньше этого числа
-  FOCUS: [
-    {name:'КРАСНОЕ ЗНАМЯ ЗАВОД ПАО', mop:'Галин Андрей',                 visit:['КРАСНОЕ ЗНАМЯ','КЗ']},
-    {name:'АЛМАЗ НПО ПАО', mop:'Архипов Герман',                         visit:['АЛМАЗ']},
-    {name:'ММЗ АО г.Йошкар-Ола', mop:'Сёмин Владислав',                   visit:['ММЗ']},
-    {name:'ИСТОК ИМ. ШОКИНА НПП АО', mop:'Ореховский Сергей',               visit:['ИСТОК','*ШОКИНА']},
-    {name:'РПЗ АО', mop:'Хлебова Татьяна',                                visit:['РПЗ']},
-    {name:'ВЫМПЕЛ ИМ. И.И. ТОРОПОВА ГОС МКБ АО', mop:'Галин Андрей',   visit:['ВЫМПЕЛ','*ТОРОПОВА']},
-    {name:'КАЛАШНИКОВ КОНЦЕРН АО', mop:'Сёмин Владислав',                 visit:['*КАЛАШНИКОВ']},
-    {name:'ИНСТРУМЕНТ-Д ООО', mop:'Сёмин Владислав',                      visit:['ИНСТРУМЕНТ-Д']},
-    {name:'МАШИНОСТРОИТЕЛЬНЫЙ ЗАВОД АО', mop:'Хлебова Татьяна',           visit:['МСЗ','МАШИНОСТРОИТЕЛЬНЫЙ ЗАВОД']},
-    {name:'БЮРО 1440 ООО', mop:'Галин Андрей',                         visit:['БЮРО','БЮРО 1440']},
-    {name:'ВНИИА ФГУП филиал МОКБ "МАРС"', mop:'Беседкин Александр',         visit:['МАРС','МОКБ МАРС','ВНИИА (М)','ВНИИА (МАРС)']},
-    {name:'ВНИИА ФГУП', mop:'Беседкин Александр',                            visit:['ВНИИА']},
-    {name:'РУЗХИММАШ АО', mop:'Сёмин Владислав',                          visit:['РУЗХИММАШ','РХМ']},
-    {name:'Наро-Фоминский машиностроительный завод АО', mop:'Ореховский Сергей', visit:['НФМЗ','*НАРО-ФОМИН']},
-    {name:'МИР СТАНОЧНИКА ООО', mop:'Ерышев Алексей',                    visit:['МИР СТАНОЧНИКА']},
-    {name:'НИКИМТ-АТОМСТРОЙ АО', mop:'Кондря Максим',                   visit:['НИКИМТ','НИКИМТ-АТОМСТРОЙ']},
-    {name:'ГУСАР ООО', mop:'Прокопенко Никита',                             visit:['ГУСАР']},
-    {name:'НПЦАП АО', mop:'Галин Андрей',                              visit:['НПЦАП']},
-    {name:'КБХИММАШ ИМ. А.М. ИСАЕВА АО', mop:'Кондря Максим',           visit:['КБХИММАШ','*ИСАЕВА']},
-    {name:'НПОДАР АО', mop:'Кондря Максим',                             visit:['НПОДАР','НПО ДАР']},
-    {name:'РЕГИОН ГНПП АО', mop:'Ореховский Сергей',                        visit:['РЕГИОН']},
-    {name:'РКК ЭНЕРГИЯ ПАО', mop:'Кондря Максим',                       visit:['РКК ЭНЕРГИЯ','ЭНЕРГИЯ']},
-    {name:'РПКБ АО', mop:'Хлебова Татьяна',                               visit:['РПКБ']},
-    {name:'РЯЗАНСКИЙ РАДИОЗАВОД АО', mop:'Беляев Дмитрий',               visit:['РРЗ','*РЯЗАНСКИЙ РАДИО']},
-    {name:'ЦНИИАГ АО', mop:'Хлебова Татьяна',                             visit:['ЦНИИАГ']},
-    {name:'ВЕДАПРОЕКТ ООО', mop:'Галин Андрей',                        visit:['ВЕДАПРОЕКТ']},
-    {name:'Российские Космические Системы АО', mop:'Архипов Герман',     visit:['РКС','*КОСМИЧЕСКИЕ СИСТЕМЫ']},
+  /* Две страницы вкладки «Фокус» — по файлу «Клиенты_AB_присутствие_и_потенциал» (28.10.2026).
+     names — как клиент в отчёте 1С (можно несколько — суммируются); mop — закреплённый МОП;
+     visit — как предприятие пишут в «ВЫРАБОТКА МОП» (колонка G), «*» — искать внутри названия. */
+  FOCUS_PRI: [
+    {names:['КРАСНОЕ ЗНАМЯ ЗАВОД ПАО'], t:'Красное Знамя', cat:'A', mop:'Галин Андрей', visit:['КРАСНОЕ ЗНАМЯ','КЗ']},
+    {names:['КАЛАШНИКОВ КОНЦЕРН АО'], t:'Концерн «Калашников»', cat:'A', mop:'Сёмин Владислав', visit:['*КАЛАШНИКОВ']},
+    {names:['ИСТОК ИМ. ШОКИНА НПП АО'], t:'НПП «Исток» им. Шокина', cat:'A', mop:'Ореховский Сергей', visit:['ИСТОК','*ШОКИНА']},
+    {names:['ММЗ АО г.Йошкар-Ола'], t:'ММЗ (Йошкар-Ола)', cat:'A', mop:'Сёмин Владислав', visit:['ММЗ']},
+    {names:['РКК ЭНЕРГИЯ ПАО'], t:'РКК «Энергия»', cat:'A', mop:'Кондря Максим', visit:['РКК ЭНЕРГИЯ','ЭНЕРГИЯ']},
+    {names:['РПЗ АО'], t:'РПЗ', cat:'B', mop:'Хлебова Татьяна', visit:['РПЗ']},
+    {names:['АЛМАЗ НПО ПАО'], t:'НПО «Алмаз»', cat:'B', mop:'Архипов Герман', visit:['АЛМАЗ']},
+    {names:['ВЫМПЕЛ ИМ. И.И. ТОРОПОВА ГОС МКБ АО'], t:'ГосМКБ «Вымпел»', cat:'B', mop:'Галин Андрей', visit:['ВЫМПЕЛ','*ТОРОПОВА']},
+    {names:['ВНИИА ФГУП','ВНИИА ФГУП филиал МОКБ "МАРС"'], t:'ВНИИА (с МОКБ «Марс»)', cat:'B', mop:'Беседкин Александр', visit:['ВНИИА','МАРС','МОКБ МАРС']},
+    {names:['РЯЗАНСКИЙ РАДИОЗАВОД АО'], t:'Рязанский радиозавод', cat:'B', mop:'Беляев Дмитрий', visit:['РРЗ','*РЯЗАНСКИЙ РАДИО']},
+    {names:['БЮРО 1440 ООО'], t:'Бюро 1440', cat:'B', mop:'Галин Андрей', visit:['БЮРО','БЮРО 1440']},
+    {names:['КБХИММАШ ИМ. А.М. ИСАЕВА АО'], t:'КБхиммаш им. Исаева', cat:'B', mop:'Кондря Максим', visit:['КБХИММАШ','*ИСАЕВА']},
+    {names:['РУЗХИММАШ АО'], t:'Рузхиммаш', cat:'B', mop:'Сёмин Владислав', visit:['РУЗХИММАШ','РХМ']},
+    {names:['НИКИМТ-АТОМСТРОЙ АО'], t:'НИКИМТ-Атомстрой', cat:'B', mop:'Кондря Максим', visit:['НИКИМТ','НИКИМТ-АТОМСТРОЙ']},
+    {names:['ГКНПЦ ИМ. М.В. ХРУНИЧЕВА АО'], t:'ГКНПЦ им. Хруничева', cat:'B', mop:'Ореховский Сергей', visit:['ГКНПЦ','*ХРУНИЧЕВ']},
+    {names:['МАШИНОСТРОИТЕЛЬНЫЙ ЗАВОД АО'], t:'МСЗ (Электросталь)', cat:'B', mop:'Хлебова Татьяна', visit:['МСЗ','МАШИНОСТРОИТЕЛЬНЫЙ ЗАВОД']},
+    {names:['РЕГИОН ГНПП АО'], t:'ГНПП «Регион»', cat:'B', mop:'Ореховский Сергей', visit:['РЕГИОН']},
+    {names:['НПЦАП АО'], t:'НПЦАП', cat:'B', mop:'Галин Андрей', visit:['НПЦАП']},
+    {names:['ИНСТРУМЕНТ-Д ООО'], t:'Инструмент-Д', cat:'', mop:'Сёмин Владислав', visit:['ИНСТРУМЕНТ-Д']}
   ],
+  FOCUS_OTH: [
+    {names:['НПОДАР АО'], t:'НПОДАР', cat:'C', mop:'Кондря Максим', visit:['НПОДАР','НПО ДАР']},
+    {names:['МИР СТАНОЧНИКА ООО'], t:'Мир Станочника', cat:'D', mop:'Ерышев Алексей', visit:['МИР СТАНОЧНИКА']},
+    {names:['ЦАГИ ФАУ'], t:'ЦАГИ', cat:'C', mop:'Кондря Максим', visit:['ЦАГИ']},
+    {names:['КТ-спектр АО'], t:'КТ-спектр', cat:'C', mop:'Сёмин Владислав', visit:['КТ-СПЕКТР','КТ СПЕКТР']},
+    {names:['ПРОМТЕХАЭРО НТЦ АО'], t:'ПромТехАэро НТЦ', cat:'D', mop:'Архипов Герман', visit:['ПРОМТЕХАЭРО']},
+    {names:['ПЛАЗМА АО'], t:'Плазма', cat:'C', mop:'Беляев Дмитрий', visit:['ПЛАЗМА']},
+    {names:['КИРОВСКИЙ ЗАВОД МАЯК ПАО'], t:'Кировский завод «Маяк»', cat:'', mop:'Сёмин Владислав', visit:['МАЯК','*ЗАВОД МАЯК']},
+    {names:['КЭМЗ ПАО'], t:'КЭМЗ', cat:'C', mop:'Сёмин Владислав', visit:['КЭМЗ']},
+    {names:['360 АРЗ АО'], t:'360 АРЗ', cat:'C', mop:'Беляев Дмитрий', visit:['360 АРЗ']},
+    {names:['ТЯЖПРЕССМАШ ПАО'], t:'Тяжпрессмаш', cat:'C', mop:'Беляев Дмитрий', visit:['ТЯЖПРЕССМАШ']},
+    {names:['КБМ АО'], t:'КБМ', cat:'C', mop:'Беседкин Александр', visit:['КБМ']},
+    {names:['НИИП им. В.В. Тихомирова АО'], t:'НИИП им. Тихомирова', cat:'C', mop:'Кондря Максим', visit:['НИИП','*ТИХОМИРОВА']},
+    {names:['СТАНКОМАШСТРОЙ ООО'], t:'Станкомашстрой', cat:'C', mop:'Сёмин Владислав', visit:['СТАНКОМАШСТРОЙ']},
+    {names:['ДЗКТ АО'], t:'ДЗКТ', cat:'C', mop:'Беседкин Александр', visit:['ДЗКТ']},
+    {names:['ТД ВЕКПРОМ ООО'], t:'ТД Векпром', cat:'D', mop:'Кондря Максим', visit:['ВЕКПРОМ','ТД ВЕКПРОМ']},
+    {names:['ЧЕСТНАЯ КОМПАНИЯ ООО'], t:'Честная компания', cat:'D', mop:'Ерышев Алексей', visit:['ЧЕСТНАЯ КОМПАНИЯ']},
+    {names:['ЛАБС 1440 АО'], t:'ЛАБС 1440', cat:'C', mop:'Галин Андрей', visit:['ЛАБС','ЛАБС 1440']},
+    {names:['ЗОМЗ АО'], t:'ЗОМЗ', cat:'C', mop:'Беседкин Александр', visit:['ЗОМЗ']},
+    {names:['ЦНИИАГ АО'], t:'ЦНИИАГ', cat:'C', mop:'Хлебова Татьяна', visit:['ЦНИИАГ']},
+    {names:['ПРОМТЕХ-Дубна АО'], t:'ПромТех-Дубна', cat:'C', mop:'Беседкин Александр', visit:['ПРОМТЕХ-ДУБНА','ПРОМТЕХ ДУБНА']},
+    {names:['РПКБ АО'], t:'РПКБ', cat:'C', mop:'Хлебова Татьяна', visit:['РПКБ']},
+    {names:['356 АРЗ АО'], t:'356 АРЗ', cat:'C', mop:'Сёмин Владислав', visit:['356 АРЗ']},
+    {names:['КОНСТАНТА АО'], t:'Константа', cat:'C', mop:'Кондря Максим', visit:['КОНСТАНТА']},
+    {names:['СПС АО'], t:'СПС', cat:'C', mop:'Беседкин Александр', visit:['СПС']},
+    {names:['ДУКС АО'], t:'ДУКС', cat:'C', mop:'Галин Андрей', visit:['ДУКС']},
+    {names:['ЗПК НПП ООО'], t:'НПП ЗПК', cat:'C', mop:'Галин Андрей', visit:['ЗПК']},
+    {names:['ИНТЕГРАЛ-В НПП АО'], t:'НПП «Интеграл-В»', cat:'C', mop:'Беседкин Александр', visit:['ИНТЕГРАЛ-В','ИНТЕГРАЛ']},
+    {names:['ТЕХМАШ ООО'], t:'Техмаш', cat:'C', mop:'Беляев Дмитрий', visit:['ТЕХМАШ']}
+  ],
+  FOCUS_MARKS_TAB: 'Фокус отметки',   // «Семинар АКСИС» и «Клиентский маршрут» (ставятся в «Управлении»)
+  AKB_PLAN_TAB: 'План АКБ',           // план АКБ на конец года (правится в «Управлении»)
+  AKB_PLAN: {'Галин Андрей':9,'Сёмин Владислав':11,'Кондря Максим':9,'Хлебова Татьяна':6,'Беседкин Александр':11,'Ореховский Сергей':4,'Беляев Дмитрий':9,'Архипов Герман':1,'Ерышев Алексей':4,'Кульков Сергей':0},   // если вкладка недоступна
+  AKB_PLAN_LABEL: 'на конец 2026',
   /* колонки таблицы «Фокус» — как в макросе; справа — сегменты 1С */
   FOCUS_COLS: [
     ['INSIZE',                   ['INSIZE']],
@@ -636,6 +683,9 @@ const CONFIG = {
 };
 /* ================================================================= */
 
+CONFIG.FOCUS_PRI.forEach(f=>{f.grp='pri'; f.name=f.names[0];}); CONFIG.FOCUS_OTH.forEach(f=>{f.grp='oth'; f.name=f.names[0];});
+CONFIG.FOCUS=[...CONFIG.FOCUS_PRI,...CONFIG.FOCUS_OTH];
+let MARKS={}, AKBPLAN=null, focusTab='pri';
 const MONTHS = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
 const MONTHS_SHORT = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
 const MONTH_RE = [/^янв/i,/^фев/i,/^мар/i,/^апр/i,/^ма[йя]/i,/^июн/i,/^июл/i,/^авг/i,/^сен/i,/^окт/i,/^ноя/i,/^дек/i];
@@ -1322,6 +1372,7 @@ function renderRP(P){
 }
 
 /* ---------- АКБ ---------- */
+const pctR=(a,b)=>b>0?Math.round(a/b*100)+'%':'—';
 function akbPeople(mo){ return mo.people.filter(p=>p.akb&&p.akb.length); }
 function akbSet(mo){ return new Set(akbPeople(mo).flatMap(p=>p.akb.map(c=>c.key))); }
 function renderAkbTiles(mo,prev){
@@ -1332,13 +1383,13 @@ function renderAkbTiles(mo,prev){
   const dCnt=pv&&pv.size?all.size-pv.size:null;
   const top=ppl.slice().sort((a,b)=>b.akb.length-a.akb.length)[0];
   $('tiles').innerHTML=`
-   <div class="tile"><div class="lbl">Клиентов в АКБ компании</div><div class="val">${all.size}</div><div class="note">${dCnt==null?'&nbsp;':(dCnt>=0?`<span class="delta-up">▲ ${dCnt}</span>`:`<span class="delta-down">▼ ${-dCnt}</span>`)+` к ${MONTHS_SHORT[prev.m]}`}</div></div>
+   <div class="tile" data-tip="План АКБ ${esc(CONFIG.AKB_PLAN_LABEL)} — сумма планов сотрудников (корректируется в разделе «Управление»)"><div class="lbl">Клиентов в АКБ компании · план ${esc(CONFIG.AKB_PLAN_LABEL)}</div><div class="val">${all.size} <small>/ ${akbPlanTotal()} · ${pctR(all.size,akbPlanTotal())}</small></div><div class="note">${dCnt==null?'&nbsp;':(dCnt>=0?`<span class="delta-up">▲ ${dCnt}</span>`:`<span class="delta-down">▼ ${-dCnt}</span>`)+` к ${MONTHS_SHORT[prev.m]}`}</div></div>
    <div class="tile"><div class="lbl">Объём продаж по АКБ за 3 месяца</div><div class="val">${fmtM(vol)}</div><div class="note">по данным вкладки «${esc(mo.tab)}»</div></div>
    <div class="tile" data-tip="${esc(added.map(nameOf).join('<br>'))}"><div class="lbl">Новые клиенты в АКБ</div><div class="val">${pv&&pv.size?'+'+added.length:'—'}</div><div class="note">${added.slice(0,4).map(k=>esc(nameOf(k))).join(', ')||'&nbsp;'}</div></div>
    <div class="tile" data-tip="${esc(lost.map(nameOf).join('<br>'))}"><div class="lbl">Выпали из АКБ</div><div class="val">${pv&&pv.size?'−'+lost.length:'—'}</div><div class="note">${lost.slice(0,4).map(k=>esc(nameOf(k))).join(', ')||'&nbsp;'}</div></div>`;
 }
 function renderAkb(mo,prev){
-  const list=akbPeople(mo).map(p=>({p, lead:isLeader(p.name), n:p.akb.length, vol:sum(p.akb.map(c=>c.amount))})).sort((a,b)=>(a.lead-b.lead)||b.n-a.n||b.vol-a.vol);
+  const list=akbPeople(mo).map(p=>({p, lead:isLeader(p.name), n:p.akb.length, plan:akbPlanOf(p.name), vol:sum(p.akb.map(c=>c.amount))})).sort((a,b)=>(a.lead-b.lead)||b.n-a.n||b.vol-a.vol);
   const firstLead=list.find(x=>x.lead);
   if(!list.length){ $('akbRows').innerHTML='<div class="empty">В этой вкладке нет данных АКБ</div>'; return; }
   const max=Math.max(1,...list.map(x=>x.vol));
@@ -1351,7 +1402,7 @@ function renderAkb(mo,prev){
     return (x===firstLead?LEADER_SEP():'')+`<div class="arow${x.lead?' lead':''}">
       <div class="rank">${x.lead?'':medalHtml(rank)}</div>
       <div class="who"><div class="nm">${esc(x.p.name)}</div><div class="rl">${esc(x.p.role||'')}</div></div>
-      <div class="acnt"><span class="n">${x.n}</span><span class="d">${d==null?'':d>0?`▲ ${d} к ${MONTHS_SHORT[prev.m]}`:d<0?`▼ ${-d} к ${MONTHS_SHORT[prev.m]}`:`= ${MONTHS_SHORT[prev.m]}`}</span></div>
+      <div class="acnt"${x.plan?` data-tip="${esc('План АКБ '+CONFIG.AKB_PLAN_LABEL+': '+x.plan+' · выполнено '+pctR(x.n,x.plan))}"`:''}><span class="n">${x.n}${x.plan?`<small class="pl${x.n>=x.plan?' ok':''}"> / ${x.plan}</small>`:''}</span><span class="d">${d==null?'':d>0?`▲ ${d} к ${MONTHS_SHORT[prev.m]}`:d<0?`▼ ${-d} к ${MONTHS_SHORT[prev.m]}`:`= ${MONTHS_SHORT[prev.m]}`}</span></div>
       <div class="barcell"><div class="track"><div class="bar" style="width:${x.vol/max*100}%"></div></div><div class="cap" style="margin:0;min-width:6vw;text-align:right"><b>${fmtM(x.vol)}</b></div></div>
       <div class="chips">${chips}</div></div>`;
   }).join('');
@@ -1404,7 +1455,8 @@ function focusData(){
     visits[i].set(p.name,(visits[i].get(p.name)||0)+v.count);
   }
   const rows=(CONFIG.FOCUS||[]).map((f,i)=>{
-    const o=byKey.get(fKey(f.name))||{cells:new Array(cols.length).fill(0),other:0,tot:0,totY:0,mgr:new Map()};
+    const o={cells:new Array(cols.length).fill(0),other:0,tot:0,totY:0,mgr:new Map()};
+    for(const nm of f.names){ const x=byKey.get(fKey(nm)); if(!x) continue; x.cells.forEach((v,k)=>o.cells[k]+=v); o.other+=x.other; o.tot+=x.tot; o.totY+=x.totY; for(const [n,v] of x.mgr) o.mgr.set(n,(o.mgr.get(n)||0)+v); }
     let mop=f.mop||'', mopAuto=false;
     if(!mop){
       const cand=[...o.mgr].filter(([n,v])=>v>0&&!isHidden(n)).sort((a,b)=>(isLeader(a[0])-isLeader(b[0]))||b[1]-a[1]);
@@ -1416,27 +1468,31 @@ function focusData(){
     const warn=[]; let lvl='';
     if((vMop||0)<(CONFIG.FOCUS_RED_VISITS||3)){ warn.push(`визитов МОП за 3 месяца: ${vMop||0} — меньше ${CONFIG.FOCUS_RED_VISITS||3}`); lvl='orange'; }
     if(o.totY<(CONFIG.FOCUS_RED_SALES||1e6)){ warn.unshift(`отгрузки за год ${fmtM(o.totY)} — меньше ${fmtM(CONFIG.FOCUS_RED_SALES||1e6)}`); lvl='red'; }
-    return {f, i, top:i<(CONFIG.FOCUS_TOP||12), ...o, mop, mopAuto, vMop, vAll, vis, warn, lvl};
+    const mk=MARKS[f.name]||{};
+    return {f, i, top:true, ...o, mop, mopAuto, vMop, vAll, vis, warn, lvl, sem:!!mk.sem, route:!!mk.route};
   });
   return {FP, cols, rows, allTot, vm};
 }
 function renderFocus(){
   const box=$('focusBox');
   if(!SALES||!SALES.ship){ box.innerHTML=`<div class="empty">Нет данных об отгрузках (лист «Отгрузки 2026»).${salesErr?'<br>'+esc(salesErr):''}</div>`; $('tiles').innerHTML=''; $('subtitle').textContent=''; return; }
-  const D=focusData(), {FP,cols,rows}=D;
+  const D=focusData(), {FP,cols}=D;
+  const rows=D.rows.filter(r=>r.f.grp===focusTab); rows.forEach((r,k)=>r.n=k+1);
+  const isPri=focusTab==='pri', nPri=CONFIG.FOCUS_PRI.length, nOth=CONFIG.FOCUS_OTH.length;
   const dd=a=>a?`${pad(a.d)}.${pad(a.m+1)}`:'—';
   const vmLbl=D.vm.length?`${MONTHS_SHORT[D.vm[0].m]}–${MONTHS_SHORT[D.vm[D.vm.length-1].m]}`:'—';
   $('subtitle').textContent=`${FP.label} · отгрузки 1С на ${dd(SALES.ship.asOf)} · млн ₽ с НДС · визиты МОП за ${vmLbl} по «ВЫРАБОТКА МОП»`;
   // плитки
-  const ftot=sum(rows.map(r=>r.tot)), ttot=sum(rows.filter(r=>r.top).map(r=>r.tot));
-  const zero=rows.filter(r=>!(r.tot>0.5)), noVis=rows.filter(r=>r.top&&r.mop&&!r.vMop);
+  const ftot=sum(rows.map(r=>r.tot));
+  const zero=rows.filter(r=>!(r.tot>0.5)), noVis=rows.filter(r=>r.mop&&!r.vMop);
+  const nSem=rows.filter(r=>r.sem).length, nRoute=rows.filter(r=>r.route).length;
   const vSum=sum(rows.map(r=>r.vMop||0));
   const pc=(a,b)=>b>0?Math.round(a/b*100)+'%':'—';
   $('tiles').innerHTML=`
-   <div class="tile"><div class="lbl">Отгрузки фокусным · ${FP.short}</div><div class="val">${fmtM(ftot)}</div><div class="note">${pc(ftot,D.allTot)} всех отгрузок компании (${fmtM(D.allTot)})</div></div>
-   <div class="tile"><div class="lbl">Из них приоритетные ${CONFIG.FOCUS_TOP}</div><div class="val">${fmtM(ttot)}</div><div class="note">${pc(ttot,ftot)} от фокусных</div></div>
+   <div class="tile"><div class="lbl">Отгрузки · ${isPri?'приоритет':'остальные'} · ${FP.short}</div><div class="val">${fmtM(ftot)}</div><div class="note">${pc(ftot,D.allTot)} всех отгрузок компании (${fmtM(D.allTot)})</div></div>
+   <div class="tile"><div class="lbl">Семинар АКСИС / Клиентский маршрут</div><div class="val">${nSem} <small>/ ${nRoute}</small></div><div class="note">проведены, из ${rows.length} предприятий</div></div>
    <div class="tile" data-tip="${esc(zero.map(r=>r.f.name).join('<br>'))}"><div class="lbl">Без отгрузок за период</div><div class="val">${zero.length} <small>из ${rows.length}</small></div><div class="note">${esc(zero.slice(0,4).map(r=>normOrg(r.f.name)).join(', '))||'&nbsp;'}${zero.length>4?' …':''}</div></div>
-   <div class="tile" data-tip="${esc(noVis.map(r=>r.f.name+' — '+surname(r.mop)).join('<br>'))}"><div class="lbl">Визиты закреплённых МОП · ${vmLbl}</div><div class="val">${vSum}</div><div class="note">${noVis.length?`<span class="delta-down">приоритетные без визита МОП: ${noVis.length}</span>`:'<span class="delta-up">✓ все приоритетные посещены</span>'}</div></div>`;
+   <div class="tile" data-tip="${esc(noVis.map(r=>r.f.name+' — '+surname(r.mop)).join('<br>'))}"><div class="lbl">Визиты закреплённых МОП · ${vmLbl}</div><div class="val">${vSum}</div><div class="note">${noVis.length?`<span class="delta-down">без визита МОП: ${noVis.length}</span>`:'<span class="delta-up">✓ все посещены</span>'}</div></div>`;
   // таблица
   const maxC=Math.max(1,...rows.flatMap(r=>r.cells)), maxT=Math.max(1,...rows.map(r=>r.tot));
   const heat=(v,mx)=>{ if(!(v>0.5)) return ''; const t=Math.sqrt(v/mx); const a=[0x2d,0x2b,0x2b], b=[0xb0,0x56,0x2f]; return `background:rgb(${a.map((x,i)=>Math.round(x+(b[i]-x)*(0.15+0.85*t)))})`; };
@@ -1447,11 +1503,13 @@ function renderFocus(){
     const mgrTip=[...r.mgr].filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`${n} — ${fmtM(v)}`).join('<br>');
     const vis = !r.mop ? `<span class="d">—</span>`
       : `<b class="${r.vMop?'':'z'}">${r.vMop}</b>${r.vAll>r.vMop?`<small>/${r.vAll}</small>`:''}`;
-    return `<tr class="${r.top?'top':'oth'}${r.tot>0.5?'':' zero'}${r.lvl?' '+r.lvl:''}${r.i===(CONFIG.FOCUS_TOP||12)?' brk':''}">
-      <td class="n">${r.i+1}</td>
-      <td class="nm" data-tip="${esc(r.f.name+(r.warn.length?'<br>⚠ '+r.warn.join('<br>⚠ '):''))}">${esc(r.f.name)}</td>
+    return `<tr class="top${r.tot>0.5?'':' zero'}${r.lvl?' '+r.lvl:''}">
+      <td class="n">${r.n}</td>
+      <td class="nm" data-tip="${esc(r.f.names.join(' + ')+(r.f.cat?' · категория '+r.f.cat:'')+(r.warn.length?'<br>⚠ '+r.warn.join('<br>⚠ '):''))}">${esc(r.f.t||r.f.name)}${r.f.cat?` <span class="fcat c${r.f.cat}">${r.f.cat}</span>`:''}</td>
       <td class="mop" data-tip="${esc((r.mopAuto?'В списке закреплений предприятия нет — МОП определён по наибольшим отгрузкам<br>':r.mop?'Закреплён: '+r.mop+'<br>':'')+(mgrTip?'Отгрузки за год:<br>'+mgrTip:'Отгрузок в этом году нет'))}">${r.mop?esc(surname(r.mop))+(r.mopAuto?'<sup style="color:var(--text-muted)">*</sup>':''):'—'}</td>
       <td class="vis" data-tip="${esc('Визиты за '+vmLbl+':<br>'+visTip)}">${vis}</td>
+      <td class="mk"><span class="mkp ${r.sem?'ok':'no'}">${r.sem?'проведён':'не проводился'}</span></td>
+      <td class="mk"><span class="mkp ${r.route?'ok':'no'}">${r.route?'проведён':'не проводился'}</span></td>
       <td class="tot" style="${heat(r.tot,maxT)}" data-tip="${esc(r.f.name+': '+tipRub(r.tot)+(r.other>0.5?'<br>в т.ч. прочие сегменты '+tipRub(r.other):''))}">${fmtCell(r.tot)||'<span class="d">—</span>'}</td>
       ${r.cells.map((v,k)=>`<td class="${v>0.5?'':'c0'}${k===eqIdx?' eq':''}" style="${heat(v,maxC)}"${v>0.5?` data-tip="${esc(normOrg(r.f.name)+' · '+cols[k][0]+': '+tipRub(v))}"`:''}>${fmtCell(v)}</td>`).join('')}
     </tr>`;
@@ -1459,14 +1517,15 @@ function renderFocus(){
   const sumRow=(label,list,cls)=>{
     const cs=cols.map((c,k)=>sum(list.map(r=>r.cells[k]))), t=sum(list.map(r=>r.tot));
     const vm=sum(list.map(r=>r.vMop||0));
-    return `<tr class="${cls}"><td class="n"></td><td class="nm">${label}</td><td></td><td class="vis">${vm||''}</td><td class="tot">${fmtCell(t)}</td>${cs.map(v=>`<td>${fmtCell(v)}</td>`).join('')}</tr>`;
+    return `<tr class="${cls}"><td class="n"></td><td class="nm">${label}</td><td></td><td class="vis">${vm||''}</td><td class="mk">${list.filter(r=>r.sem).length||''}</td><td class="mk">${list.filter(r=>r.route).length||''}</td><td class="tot">${fmtCell(t)}</td>${cs.map(v=>`<td>${fmtCell(v)}</td>`).join('')}</tr>`;
   };
-  const top=rows.filter(r=>r.top), oth=rows.filter(r=>!r.top);
-  const W=CONFIG.MOBILE?'':`<colgroup><col style="width:1.8%"><col style="width:17%"><col style="width:6.6%"><col style="width:4.4%"><col style="width:5.6%">${cols.map(()=>'<col>').join('')}</colgroup>`;
-  box.innerHTML=`<table>${W}<thead><tr><th>#</th><th class="l">Предприятие</th><th class="l">МОП</th><th data-tip="Визиты закреплённого МОП за ${vmLbl}; после «/» — все визиты к предприятию">Визиты<br>${vmLbl}</th><th class="tot">Итого</th>${cols.map(c=>`<th>${esc(c[0])}</th>`).join('')}</tr></thead><tbody>
+  const W=CONFIG.MOBILE?'':`<colgroup><col style="width:1.5%"><col style="width:13.5%"><col style="width:5.6%"><col style="width:3.8%"><col style="width:6.6%"><col style="width:6.6%"><col style="width:4.8%">${cols.map(()=>'<col>').join('')}</colgroup>`;
+  box.innerHTML=`<div class="fsw"><button data-ft="pri" class="${isPri?'on':''}">Приоритет · ${nPri}</button><button data-ft="oth" class="${isPri?'':'on'}">Остальные · ${nOth}</button><span class="fsn">Отметки семинаров и маршрутов ставятся в разделе «Управление»</span></div>
+  <div class="ftw"><table>${W}<thead><tr><th>#</th><th class="l">Предприятие</th><th class="l">МОП</th><th data-tip="Визиты закреплённого МОП за ${vmLbl}; после «/» — все визиты к предприятию">Визиты<br>${vmLbl}</th><th>Семинар<br>АКСИС</th><th>Клиентский<br>маршрут</th><th class="tot">Итого</th>${cols.map(c=>`<th>${esc(c[0])}</th>`).join('')}</tr></thead><tbody>
     ${rows.map(rowHtml).join('')}
-    ${sumRow('Всего по фокусным',rows,'sumr')}
-  </tbody></table>`;
+    ${sumRow(isPri?'Всего · приоритет':'Всего · остальные',rows,'sumr')}
+  </tbody></table></div>`;
+  box.querySelectorAll('.fsw button').forEach(b=>b.onclick=()=>{ focusTab=b.dataset.ft; rotT0=Date.now(); renderFocus(); });
 }
 
 /* ---------- ДЗ / ПДЗ ---------- */
@@ -1610,7 +1669,7 @@ function renderDZ(){
   };
   const legend=`<div class="dz-legend"><span><i style="background:#5d5a58"></i>не просрочено</span>${DZ_BUCKETS.map(b=>`<span><i style="background:${b[2]}"></i>просрочка ${b[0]}</span>`).join('')}<span><i style="background:repeating-linear-gradient(45deg,#c4433a 0 2px,#6b2b27 2px 4px)"></i>срок не указан</span></div>`;
   // крупнейшая просрочка
-  const focusKeys=new Set((CONFIG.FOCUS||[]).map(f=>fKey(f.name)));
+  const focusKeys=new Set((CONFIG.FOCUS||[]).flatMap(f=>f.names.map(fKey)));
   const top=D.clients.filter(c=>c.pdz>0.5).sort((a,b)=>b.pdz-a.pdz).slice(0,CONFIG.DZ_TOP_CLIENTS||12);
   const maxP=Math.max(1,...top.map(c=>c.pdz));
   const restN=D.clients.filter(c=>c.pdz>0.5).length-top.length;
@@ -1661,6 +1720,7 @@ function drawDZChart(H, D){
 /* ---------- экраны, автопрокрутка ---------- */
 function show(i){
   screen=(i+SCREENS.length)%SCREENS.length; rotT0=Date.now();
+  if(SCREENS[screen].focus && CONFIG.ROTATE_SEC && !paused) focusTab='pri';
   document.querySelectorAll('.screen').forEach((s,k)=>s.classList.toggle('active',k===screen));
   document.querySelectorAll('.tab').forEach((t,k)=>t.classList.toggle('active',k===screen));
   if(!SCREENS[screen].tiles) $('tiles').innerHTML='';
@@ -1673,7 +1733,7 @@ setInterval(()=>{
   if(!CONFIG.ROTATE_SEC||paused) return;
   const f=(Date.now()-rotT0)/(CONFIG.ROTATE_SEC*1000);
   if(bars[screen]) bars[screen].style.width=Math.min(100,f*100)+'%';
-  if(f>=1) show(screen+1);
+  if(f>=1){ if(SCREENS[screen].focus && focusTab==='pri'){ focusTab='oth'; rotT0=Date.now(); render(); } else show(screen+1); }
 },250);
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>show(+t.dataset.s));
 $('mPrev').onclick=()=>{const i=DATA.findIndex(d=>d.key===sel); if(i>0){sel=DATA[i-1].key; render();}};
@@ -1711,6 +1771,30 @@ function nextRefreshAt(from){
   return t;
 }
 let busy=false, salesErr='', DZ=null, dzErr='';
+/* отметки «Семинар АКСИС» / «Клиентский маршрут» и ручной план АКБ (пишет раздел «Управление») */
+async function loadMarks(){
+  const rows=await fetchRows(CONFIG.FOCUS_MARKS_TAB);
+  if(!rows.length||!/предприятие/i.test(rows[0][0]||'')) throw new Error('нет вкладки');
+  const m={}; for(const r of rows.slice(1)){ const k=String(r[0]||'').trim(); if(k) m[k]={sem:/^да/i.test(String(r[1]||'').trim()), route:/^да/i.test(String(r[2]||'').trim())}; }
+  return m;
+}
+async function loadAkbPlan(){
+  const rows=await fetchRows(CONFIG.AKB_PLAN_TAB);
+  if(!rows.length||!/сотрудник/i.test(rows[0][0]||'')) throw new Error('нет вкладки');
+  const m={}; for(const r of rows.slice(1)){ const k=String(r[0]||'').trim(), v=String(r[1]||'').replace(/\s/g,''); if(k&&/^\d+$/.test(v)) m[personKey(k)]=+v; }
+  return m;
+}
+function akbPlanOf(name){
+  const k=personKey(name);
+  if(AKBPLAN&&k in AKBPLAN) return AKBPLAN[k];
+  for(const [n,v] of Object.entries(CONFIG.AKB_PLAN||{})) if(personKey(n)===k) return v;
+  return null;
+}
+function akbPlanTotal(){
+  const m={}; for(const [n,v] of Object.entries(CONFIG.AKB_PLAN||{})) m[personKey(n)]=v;
+  if(AKBPLAN) Object.assign(m,AKBPLAN);
+  return sum(Object.values(m));
+}
 async function refresh(){
   if(CODE!==null){ const c=await currentCode(); if(c!==CODE){ CODE=c; if(lsGet('panel.key',null)!==codeHash(c)){ lsSet('panel.key',null); location.reload(); return; } } }
   if(busy) return; busy=true;
@@ -1718,6 +1802,7 @@ async function refresh(){
   const warns=[];
   const salesP=loadSales().then(v=>({v}),e=>({e}));
   const dzP=loadDZ().then(v=>({v}),e=>({e}));
+  const mkP=loadMarks().then(v=>({v}),e=>({e})), apP=loadAkbPlan().then(v=>({v}),e=>({e}));
   try{
     const data=await loadMeetings();
     const wasLatest=!DATA||sel===DATA[DATA.length-1].key;
@@ -1726,8 +1811,10 @@ async function refresh(){
   }catch(err){ console.error(err); warns.push('встречи: '+err.message); }
   { const r=await salesP; if(r.v){ SALES=r.v; salesErr=''; } else { console.error(r.e); salesErr=r.e.message; warns.push('план/факт: '+r.e.message); } }
   { const r=await dzP; if(r.v){ DZ=r.v; dzErr=''; } else { console.error(r.e); dzErr=r.e.message; } }
+  { const r=await mkP; if(r.v) MARKS=r.v; }
+  { const r=await apP; if(r.v) AKBPLAN=r.v; }
   if(!warns.length || (DATA&&SALES)){ lastOk=Date.now(); }
-  lsSet('panel.cache4',{t:lastOk,data:DATA,sales:SALES,dz:DZ});
+  lsSet('panel.cache4',{t:lastOk,data:DATA,sales:SALES,dz:DZ,marks:MARKS,akbplan:AKBPLAN});
   if(!warns.length){ nextAt=nextRefreshAt(Date.now()); $('fWarn').textContent=SALES&&SALES.notes&&SALES.notes.length?'⚠ Оплаты: '+SALES.notes.join('; '):''; }
   else { nextAt=Date.now()+15*60e3; $('fWarn').textContent=`⚠ Не удалось обновить (${warns.join('; ')}). Повтор в ${fmtDT(nextAt).slice(6)}`; }
   if(DATA||SALES) $('overlay').classList.add('hidden');
@@ -1768,7 +1855,7 @@ async function unlock(){
 (async function start(){
   await unlock();
   const c=lsGet('panel.cache4',null);
-  if(c&&(c.data||c.sales)){ DATA=c.data; SALES=c.sales; DZ=c.dz||null; lastOk=c.t; if(DATA) sel=DATA[DATA.length-1].key; $('overlay').classList.add('hidden'); render(); }
+  if(c&&(c.data||c.sales)){ DATA=c.data; SALES=c.sales; DZ=c.dz||null; MARKS=c.marks||{}; AKBPLAN=c.akbplan||null; lastOk=c.t; if(DATA) sel=DATA[DATA.length-1].key; $('overlay').classList.add('hidden'); render(); }
   refresh();
 })();
 </script>

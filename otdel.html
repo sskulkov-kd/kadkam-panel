@@ -1,0 +1,750 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Отдел продаж Кадкам</title>
+<style>
+:root{--color-fg:#1d2430;--color-fg-muted:#5d6675;--color-bg:#f6f7f9;--color-panel:#ffffff;--color-border-line:#e1e4ea;--color-ok:#1f7a4d;--color-warn:#a36200;--color-bad:#b3261e;
+--cds-chart-grid:#eceef2;--cds-chart-muted:#b9c0cc;--cds-surface-popover:#ffffff;--cds-border:#d5d9e0;--cds-shadow-popover:0 4px 16px rgba(20,30,50,.12);--cds-text-secondary:#5d6675;
+--c0:#2b6cb0;--c1:#d08a2c;
+--font-anthropic-sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--font-anthropic-serif:Georgia,"Times New Roman",serif;
+--cds-font-size-caption:12.5px;--cds-font-size-body:14px;--cds-font-size-heading:16px;--cds-font-size-title:26px;--cds-font-weight-medium:600;
+--cds-gap-xs:4px;--cds-gap-sm:8px;--cds-gap-md:14px;--cds-gap-lg:22px;--cds-pad-xs:4px;--cds-pad-sm:8px;--cds-pad-lg:18px;--cds-radius:10px;--cds-dur-slow:.3s}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--color-fg:#e6e9ef;--color-fg-muted:#9aa3b2;--color-bg:#14171c;--color-panel:#1c2027;--color-border-line:#2c323c;--color-ok:#5cc58f;--color-warn:#e0a54a;--color-bad:#f07167;--cds-chart-grid:#272c35;--cds-chart-muted:#4a5260;--cds-surface-popover:#232832;--cds-border:#363d49;--cds-text-secondary:#9aa3b2;--c0:#6aa6e8;--c1:#e3a857;color-scheme:dark}}
+:root[data-theme="dark"]{--color-fg:#e6e9ef;--color-fg-muted:#9aa3b2;--color-bg:#14171c;--color-panel:#1c2027;--color-border-line:#2c323c;--color-ok:#5cc58f;--color-warn:#e0a54a;--color-bad:#f07167;--cds-chart-grid:#272c35;--cds-chart-muted:#4a5260;--cds-surface-popover:#232832;--cds-border:#363d49;--cds-text-secondary:#9aa3b2;--c0:#6aa6e8;--c1:#e3a857;color-scheme:dark}
+body{background:var(--color-bg);color:var(--color-fg);font-family:var(--font-anthropic-sans)}
+.wrap{max-width:1200px;margin-inline:auto;padding-block:20px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.dash-skeleton{color:transparent;background:var(--color-border-line);border-radius:6px}
+</style><style>
+.kd .tabs{display:flex;flex-wrap:wrap;gap:6px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--color-bg);padding-block:8px;border-bottom:1px solid var(--color-border-line)}
+.kd .tabs a{color:var(--color-fg);text-decoration:none;padding:6px 12px;border:1px solid var(--color-border-line);border-radius:999px;font-size:13.5px;background:var(--color-panel);display:inline-flex;gap:6px;align-items:center}
+.kd .tabs a[aria-current=page]{background:var(--color-fg);color:var(--color-bg);border-color:var(--color-fg)}
+.kd .tabs a[aria-current=page] .pill{color:inherit;border-color:currentColor}
+.kd .tabs a:focus-visible{outline:2px solid var(--c0);outline-offset:2px}
+.kd .page{display:grid;gap:var(--cds-gap-lg)}.kd .page[hidden]{display:none!important}
+.kd .pill.new{color:var(--c0)}
+.kd .mh{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap}
+.kd .mh>div:first-child{min-width:0;flex:1 1 30rem}
+.kd .eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--color-fg-muted);margin:0 0 4px}
+.kd .score{display:flex;align-items:center;gap:12px}
+.kd .pill.big{font-size:22px;padding:4px 14px;font-weight:600}
+.kd .sc{font-family:var(--font-anthropic-serif);font-size:40px;line-height:1}.kd .sc small{font-size:16px;color:var(--color-fg-muted)}
+.kd .trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.kd h3{font-size:12.5px;font-weight:600;color:var(--color-fg-muted);margin:0 0 4px}
+.kd .bv{font-size:11px;fill:var(--color-fg);text-anchor:middle;font-variant-numeric:tabular-nums}
+.kd .bl{font-size:10.5px;fill:var(--color-fg-muted);text-anchor:middle}
+.kd .b0{fill:var(--c0)}.kd .b1{fill:var(--c1)}.kd .b2{fill:var(--cds-chart-muted)}
+.kd .sw.b0{background:var(--c0)}.kd .sw.b1{background:var(--c1)}
+.kd .parts{display:grid;gap:5px}
+.kd .pr{display:grid;grid-template-columns:minmax(8rem,12rem) 1fr 2.5rem;gap:8px;align-items:center;font-size:12.5px}
+.kd .pr span{color:var(--color-fg-muted)}.kd .pr b{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.kd .pt{height:9px;background:var(--color-border-line);border-radius:3px;overflow:hidden}.kd .pt i{display:block;height:100%;background:var(--c0)}
+.kd .abrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.kd .abx{border:1px solid var(--color-border-line);border-radius:6px;padding:3px 10px;font-size:13px;font-variant-numeric:tabular-nums}
+.kd .cat{display:inline-block;min-width:18px;text-align:center;border-radius:3px;font-weight:700;font-size:11.5px;padding:0 3px;border:1px solid var(--color-border-line)}
+.kd .cat.cA{background:var(--c0);color:var(--color-panel);border-color:var(--c0)}.kd .cat.cB{color:var(--c0);border-color:var(--c0)}.kd .cat.c—{color:var(--color-fg-muted)}
+.kd td .sub{display:block;font-size:11px;color:var(--color-fg-muted)}
+.kd td.sm{font-size:11.5px;color:var(--color-fg-muted);min-width:9rem}
+.kd .hs{overflow-x:auto}
+.kd .cols3{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,18rem),1fr));gap:18px}
+.kd .cols3 ul,.kd .cols3 ol{margin:0;padding-left:1.2rem;display:grid;gap:7px;line-height:1.45;font-size:14px}
+.kd h3.g{color:var(--color-ok);font-size:15px}.kd h3.r{color:var(--color-bad);font-size:15px}
+.kd .recb{background:var(--color-bg);border-radius:8px;padding:12px 14px}.kd .recb h3{color:var(--c0);font-size:15px}
+@media (max-width:560px){.kd .trio{grid-template-columns:1fr 1fr}}
+.kd .page .tiles{grid-template-columns:repeat(auto-fit,minmax(min(100%,10rem),1fr))}
+.kd .tabs .tsep{width:1px;align-self:stretch;background:var(--color-border-line);margin-inline:4px}
+.kd .banner{border:1px solid var(--c0);border-left-width:4px;border-radius:8px;padding:10px 14px;background:var(--color-panel);font-size:14px}
+.kd td.up{color:var(--color-ok)}.kd td.down{color:var(--color-bad)}
+.kd .gbar{display:grid;grid-template-columns:minmax(9rem,13rem) 1fr 7.5rem;gap:8px;align-items:center;font-size:12.5px;margin-bottom:6px}
+.kd .gbar .tr{position:relative;height:18px;background:var(--color-border-line);border-radius:3px;overflow:hidden}
+.kd .gbar .tr i{position:absolute;left:0;top:0;bottom:0;background:var(--c0)}.kd .gbar .tr i.p25{background:var(--cds-chart-muted);height:6px;top:auto;bottom:0}
+.kd .gbar .tr em{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--color-fg)}
+.kd .gbar b{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+</style><style>
+html:root,html:root:not([data-theme="light"]),html:root[data-theme]{color-scheme:dark;
+ --color-fg:#ffffff;--color-fg-muted:#bbbaba;--color-bg:#1b1a1a;--color-panel:#242222;--color-border-line:#3d3a3a;
+ --color-ok:#7fd67c;--color-warn:#ffb45c;--color-bad:#ff7a7a;--c0:#d0602c;--c1:#bef127;
+ --cds-chart-muted:#5a5555;--cds-chart-grid:#3d3a3a;--cds-border:#3d3a3a;--cds-surface-popover:#2d2b2b;--cds-text-secondary:#bbbaba;
+ --font-anthropic-sans:"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;--font-anthropic-serif:"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+html,body{background:#1b1a1a!important;color:#fff}
+.kd h1{font-weight:700;letter-spacing:-.01em}
+.kd .tabs{background:#1b1a1a}
+.kd .tabs a{background:#2d2b2b;color:#bbbaba;border-color:#3d3a3a}
+.kd .tabs a[aria-current=page]{background:#bef127;color:#272727;border-color:#bef127;font-weight:600}
+.kd .tabs a[aria-current=page] .pill{color:#272727;border-color:#272727}
+.kd .card{background:#242222;border-color:#3d3a3a}
+.kd .recb{background:#2d2b2b}
+.kd .banner{background:#2d2b2b;border-color:#e0561a}
+.kd .cat.cA{color:#1b1a1a}
+.kh{display:flex;align-items:center;gap:14px;padding:10px 0 8px;flex-wrap:wrap}
+.kh .klogo{height:46px;width:auto;border-radius:6px}
+.kh h1{margin:0;font-size:24px;font-weight:700;color:#fff}
+.kh .ks{font-size:13px;color:#bbbaba;margin-top:2px}
+.kh .kr{margin-left:auto;display:flex;gap:8px}
+.kbtn{background:#2d2b2b;border:1px solid #3d3a3a;border-radius:999px;padding:7px 14px;font:inherit;font-size:14px;color:#bbbaba;cursor:pointer;text-decoration:none;white-space:nowrap}
+.kbtn.acc{background:#bef127;color:#272727;border-color:#bef127;font-weight:600}
+.kline{height:3px;background:linear-gradient(90deg,#e0561a 0 18%,#bef127 18% 100%);border-radius:2px;opacity:.9;margin-bottom:6px}
+.kd .note.live{color:#8d8c8c}
+</style><style>
+.kd{font-family:var(--font-anthropic-sans);color:var(--color-fg);display:grid;gap:var(--cds-gap-lg)}
+.kd h1{font-family:var(--font-anthropic-serif);font-weight:400;font-size:var(--cds-font-size-title);margin:0;text-wrap:balance}
+.kd h2{font-size:var(--cds-font-size-heading);font-weight:var(--cds-font-weight-medium);margin:0}
+.kd .lede{color:var(--color-fg-muted);margin:var(--cds-gap-xs) 0 0;max-width:70ch;line-height:1.5}
+.kd .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));gap:var(--cds-gap-md)}
+.kd .card{background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);padding:var(--cds-pad-lg);min-width:0;display:grid;gap:var(--cds-gap-sm);align-content:start}
+.kd .tile .lab{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.kd .tile .big{font-family:var(--font-anthropic-serif);font-weight:400;font-size:var(--cds-font-size-title);font-variant-numeric:tabular-nums}
+.kd .tile .sub{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.kd .note{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);margin:0;line-height:1.45}
+.kd .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,26rem),1fr));gap:var(--cds-gap-md)}
+.kd .up{color:var(--color-ok)} .kd .down{color:var(--color-bad)} .kd .warn{color:var(--color-warn)}
+.kd .scroll{overflow:auto;max-height:32rem}
+.kd table{border-collapse:collapse;width:100%;font-size:var(--cds-font-size-caption);font-variant-numeric:tabular-nums}
+.kd th,.kd td{padding:6px 8px;border-bottom:1px solid var(--color-border-line);text-align:right;white-space:nowrap}
+.kd th:first-child,.kd td:first-child,.kd td.t,.kd th.t{text-align:left}
+.kd td.wrap{white-space:normal;min-width:14rem}
+.kd th{position:sticky;top:0;background:var(--color-panel);color:var(--color-fg-muted);font-weight:var(--cds-font-weight-medium);z-index:1}
+.kd th button{all:unset;cursor:pointer}
+.kd th button:focus-visible{outline:2px solid var(--color-fg)}
+.kd .pill{display:inline-block;padding:1px 8px;border-radius:999px;border:1px solid var(--color-border-line);font-size:var(--cds-font-size-caption);margin:1px 2px 1px 0;white-space:nowrap}
+.kd .pill.bad{color:var(--color-bad)} .kd .pill.warn{color:var(--color-warn)} .kd .pill.ok{color:var(--color-ok)}
+.kd input[type=search]{font:inherit;padding:6px 10px;border:1px solid var(--color-border-line);border-radius:var(--cds-radius);background:var(--color-bg);color:var(--color-fg);max-width:20rem;width:100%}
+.kd .chart{position:relative;min-height:18rem}
+.kd .tip{position:absolute;background:var(--cds-surface-popover);border:1px solid var(--cds-border);border-radius:var(--cds-radius);box-shadow:var(--cds-shadow-popover);padding:var(--cds-pad-xs) var(--cds-pad-sm);font-size:var(--cds-font-size-caption);pointer-events:none;white-space:nowrap}
+.kd .tip .h{color:var(--cds-text-secondary)}
+.kd .legend{display:flex;flex-wrap:wrap;gap:var(--cds-gap-md);font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.kd .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.kd .heat td{text-align:center}
+.kd [data-dash-source-state=empty]{color:transparent}
+.kd [data-dash-source-state=refreshing]{opacity:.5;transition:opacity var(--cds-dur-slow)}
+.kd .fail{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--color-fg-muted);font-size:var(--cds-font-size-caption);min-height:6rem}
+.kd .fail::before{content:"";width:.375rem;height:.375rem;border-radius:50%;background:var(--color-bad)}
+.kd details summary{cursor:pointer;font-weight:var(--cds-font-weight-medium)}
+.kd details ul{margin:var(--cds-gap-sm) 0 0;padding-left:1.2rem;line-height:1.5;max-width:75ch}
+</style>
+<style>
+body{margin:0}
+.kd{max-width:1240px;margin:0 auto;padding:8px 16px 40px;box-sizing:border-box}
+.kd .tabs .grp{font-size:11.5px;color:var(--color-fg-muted);text-transform:uppercase;letter-spacing:.06em;align-self:center;margin:0 2px 0 6px}
+.kd .tabs .grp:first-child{margin-left:0}
+#olock{position:fixed;inset:0;background:#1b1a1a;display:flex;align-items:center;justify-content:center;z-index:50;font-family:"Segoe UI",Roboto,Arial,sans-serif}
+#olock form{background:#242222;border:1px solid #3d3a3a;border-radius:14px;padding:26px 28px;display:grid;gap:12px;justify-items:center;min-width:260px;color:#fff}
+#olock[hidden]{display:none}
+#olock img{height:52px;border-radius:6px}#olock h2{margin:0;font-size:18px}
+#olock input{font:inherit;font-size:22px;letter-spacing:.3em;text-align:center;width:9em;padding:8px;border-radius:8px;border:1px solid #3d3a3a;background:#1b1a1a;color:#fff}
+#olock button{font:inherit;font-weight:600;background:#bef127;color:#272727;border:0;border-radius:999px;padding:9px 22px;cursor:pointer}
+#olock .err{color:#ff7a7a;font-size:13px;min-height:1em}
+#ostat{padding:30px 0;color:#bbbaba}
+@media (max-width:700px){.kd .mh .score{display:flex}.kh h1{font-size:19px}}
+</style>
+</head><body>
+<div id="olock" hidden><form id="olf"><img alt="" src="data:image/png;base64,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"><h2>Отдел продаж</h2><div style="color:#bbbaba;font-size:13px">Введите код дашборда</div><input id="olc" inputmode="numeric" autocomplete="off" maxlength="8"><button>Войти</button><div class="err" id="ole"></div></form></div>
+<div class="kd">
+<header class="kh"><img class="klogo" alt="" src="data:image/png;base64,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"><div><h1>Отдел продаж · статистика сотрудников</h1><div class="ks" id="lv-status">Загружаю…</div></div>
+<div class="kr"><button class="kbtn" id="lv-refresh" type="button">⟳ Обновить</button><a class="kbtn acc" href="index.html">← Дашборд</a></div></header>
+<div class="kline"></div>
+<nav class="tabs" id="otabs" aria-label="Сотрудники"></nav>
+<div id="opages"><div id="ostat">Загружаю данные…</div></div>
+</div>
+<script type="text/plain" id="live-src">
+/* Живые план и факт 2026: те же Google-таблицы и тот же разбор, что в дашборде продаж (код ниже скопирован из index.html при сборке). */
+(function(){
+const CONFIG = {
+  MOBILE: false,               // true — версия для телефона (файл «Vstrechi Mobil.html»)
+  PASSCODE_TAB: 'Пароль',      // вкладка в «ВЫРАБОТКА МОП»: в ячейке A1 — код входа (4–8 цифр). Меняете там — код меняется
+  PASSCODE: '7452',            // запасной код, пока вкладки «Пароль» нет
+  SHEET_ID: '1hSr8j8-cowQ5zQirHyrGMFCJYqKGTs49L_pc6eF1fqE',      // «ВЫРАБОТКА МОП»
+  PAY_Q_TAB: 'Оплаты {q}кв {y}',   // факт оплат за ТЕКУЩИЙ квартал: «Оплаты 3кв 2026», с 1 октября — «Оплаты 4кв 2026»
+  PAY_Y_TAB: 'Оплаты год {y}',     // факт оплат с начала года: «Оплаты год 2026»
+  SHIP_TAB: '746193015',                                         // факт отгрузок (1С): вкладка «Отгрузки 2026» (номер gid из ссылки)
+  PLAN_SHEET_ID: '1-eERbz1r9CGWEkvXrEApW5p1rt4eSkl8AqZYFDMdve4',  // «План продаж 2026»
+  PLAN_GID: '580250205',                                          // вкладка плана (номер gid из ссылки)
+
+  START_MONTH: '2026-01',      // с какого месяца искать вкладки встреч
+  FIRST_TAB_MONTH: '2026-01',  // месяц самой первой (левой) вкладки «ВЫРАБОТКА МОП»
+  TABS: {                     // известные вкладки встреч (ускоряют загрузку); новые месяцы находятся автоматически
+    '2026-01':'30.01.2026','2026-02':'27.02.2026','2026-03':'31.03.2026','2026-04':'30.04.2026',
+    '2026-05':'31.05.2026','2026-06':'30.06.2026','2026-07':'31.07.2026','2026-08':'31.08.2026'
+  },
+  REFRESH_HOUR_MSK: 10,        // ежедневное обновление, час по Москве
+  ROTATE_SEC: 30,              // автосмена экранов, секунд (0 — выключить)
+  HIDE: ['Солянкин Алексей'],  // скрыть сотрудников (уволенные): их продажи остаются в итогах компании, в строке «Прочие»
+  RENAME: {                    // замена имён на всех экранах (как в таблицах → как показывать)
+    'Цой Игорь':   'Халиков Рустем',
+    'Токарь Илья': 'РН Измерительный инстр.',
+    'Денисенко Татьяна': 'Хлебова Татьяна'     // одна и та же сотрудница
+  },
+  LEADERS: ['Ерышев Алексей','Кульков Сергей'],  // руководство: показываем внизу списков, вне соревнования
+  ROLES: {                     // должности (для руководства — всегда, для остальных — если в таблице пусто)
+    'Ерышев Алексей':   'Генеральный директор',
+    'Кульков Сергей':   'Коммерческий директор',
+    'Лубков Александр': 'Руководитель технологической группы',
+    'Шатунов Максим':   'Технолог',
+    'Фокин Владимир':   'Технолог',
+    'Сорокин Артём':    'Технолог',
+    'Абрамов Кирилл':   'Технолог'
+  },
+  SHOW_ZERO_WITHOUT_PLAN: false,
+  MAX_CHIPS: 20,
+
+  /* Сегменты 1С, которые НЕ входят в факт менеджеров и итоги компании (как и в плане).
+     Они учитываются только у руководителя направления, отвечающего за них (оборудование — Халиков). */
+  EXCLUDED_SEGMENTS: ['ОБОРУДОВАНИЕ','РОБОТЫ','ПРОМЫШЛЕННЫЕ РОБОТЫ','РОБОТОТЕХНИКА'],
+
+  /* Какие сегменты 1С относятся к номенклатурным направлениям плана.
+     Слева — фрагмент названия направления в плане, справа — сегменты из отчёта 1С. */
+  CATEGORY_MAP: [
+    [/^оборудование/i,           ['ОБОРУДОВАНИЕ']],
+    [/аксис\s*монолит/i,         ['АКСИС МОНОЛИТ']],
+    [/аксис/i,                   ['АКСИС ПРОЧЕЕ']],
+    [/zcc/i,                     ['ZCC-CT','ZCCCT','ZCC CT']],
+    [/твердосплав/i,             ['МЕТАЛЛОРЕЗ (ПРОЧИЕ ТМ)']],
+    [/гост/i,                    ['МЕТАЛЛОРЕЗ (ГОСТ ИНСТУЛС)']],
+    [/крепеж|крепёж|метиз/i,     ['МЕТИЗЫ']],
+    [/insize/i,                  ['INSIZE']],
+    [/робот/i,                   ['РОБОТЫ','ПРОМЫШЛЕННЫЕ РОБОТЫ','РОБОТОТЕХНИКА']],
+    [/miyamoto/i,                ['MIYAMOTOMETROLOGY','MIYAMOTO']],
+    [/оснастк/i,                 ['ОСНАСТКА']],
+    [/прочее/i,                  ['ПРОЧИЙ ИНСТРУМЕНТ']]
+  ],
+  /* ФОКУСНЫЕ ПРЕДПРИЯТИЯ — порядок строк на экране «Фокус» (первые FOCUS_TOP — приоритетные).
+     name  — точно как клиент в отчёте 1С;
+     mop   — закреплённый МОП (если пусто — берётся менеджер с наибольшими отгрузками этому клиенту);
+     visit — как предприятие пишут в «ВЫРАБОТКА МОП» (колонка G). «*» в начале — искать внутри названия. */
+  /* ДЗ / ПДЗ: вкладки в таблице «ВЫРАБОТКА МОП», их заполняет скрипт из задачи Битрикс24 */
+  DZ_TAB: 'ДЗ',
+  DZ_HIST_TAB: 'ДЗ история',
+  DZ_KPDZ_WARN: 0.03,     // Кпдз выше — оранжевый
+  DZ_KPDZ_BAD: 0.10,      // Кпдз выше — красный
+  DZ_TOP_CLIENTS: 12,
+  DZ_OTHER: ['Егоров Денис','Токарь Илья','Беляев Андрей','Прошина Мария'],   // на листе ДЗ/ПДЗ — одной строкой «Прочие»
+  DZ_EXCLUDE: [/МЕТИЗ-ЭКСПЕРТ/i, /ТОТАЛ-ГРУПП/i],   // не показывать: выведены из ПДЗ (исполнительный лист)
+  DZ_MONTH_RESULT_DAY: 7, // файл «итогов месяца» — первый файл месяца, датированный не позже этого числа
+  /* исключения: долг по организации+контрагенту записывать другому менеджеру */
+  DZ_REASSIGN: [
+    {org:/ПРОМИНВЕСТ/i, client:/^РПЗ(\s|$)/i, mgr:'Кульков Сергей'}   // все отгрузки от Проминвеста идут от Кулькова
+  ],
+  FOCUS_TOP: 12,
+  FOCUS_VISIT_MONTHS: 3,
+  FOCUS_RED_SALES: 1e6,   // наименование КРАСНЫМ, если отгрузки за год меньше этой суммы
+  FOCUS_RED_VISITS: 3,    // наименование ОРАНЖЕВЫМ, если визитов закреплённого МОП за 3 месяца меньше этого числа
+  FOCUS: [
+    {name:'КРАСНОЕ ЗНАМЯ ЗАВОД ПАО', mop:'Галин Андрей',                 visit:['КРАСНОЕ ЗНАМЯ','КЗ']},
+    {name:'АЛМАЗ НПО ПАО', mop:'Архипов Герман',                         visit:['АЛМАЗ']},
+    {name:'ММЗ АО г.Йошкар-Ола', mop:'Сёмин Владислав',                   visit:['ММЗ']},
+    {name:'ИСТОК ИМ. ШОКИНА НПП АО', mop:'Ореховский Сергей',               visit:['ИСТОК','*ШОКИНА']},
+    {name:'РПЗ АО', mop:'Хлебова Татьяна',                                visit:['РПЗ']},
+    {name:'ВЫМПЕЛ ИМ. И.И. ТОРОПОВА ГОС МКБ АО', mop:'Галин Андрей',   visit:['ВЫМПЕЛ','*ТОРОПОВА']},
+    {name:'КАЛАШНИКОВ КОНЦЕРН АО', mop:'Сёмин Владислав',                 visit:['*КАЛАШНИКОВ']},
+    {name:'ИНСТРУМЕНТ-Д ООО', mop:'Сёмин Владислав',                      visit:['ИНСТРУМЕНТ-Д']},
+    {name:'МАШИНОСТРОИТЕЛЬНЫЙ ЗАВОД АО', mop:'Хлебова Татьяна',           visit:['МСЗ','МАШИНОСТРОИТЕЛЬНЫЙ ЗАВОД']},
+    {name:'БЮРО 1440 ООО', mop:'Галин Андрей',                         visit:['БЮРО','БЮРО 1440']},
+    {name:'ВНИИА ФГУП филиал МОКБ "МАРС"', mop:'Беседкин Александр',         visit:['МАРС','МОКБ МАРС','ВНИИА (М)','ВНИИА (МАРС)']},
+    {name:'ВНИИА ФГУП', mop:'Беседкин Александр',                            visit:['ВНИИА']},
+    {name:'РУЗХИММАШ АО', mop:'Сёмин Владислав',                          visit:['РУЗХИММАШ','РХМ']},
+    {name:'Наро-Фоминский машиностроительный завод АО', mop:'Ореховский Сергей', visit:['НФМЗ','*НАРО-ФОМИН']},
+    {name:'МИР СТАНОЧНИКА ООО', mop:'Ерышев Алексей',                    visit:['МИР СТАНОЧНИКА']},
+    {name:'НИКИМТ-АТОМСТРОЙ АО', mop:'Кондря Максим',                   visit:['НИКИМТ','НИКИМТ-АТОМСТРОЙ']},
+    {name:'ГУСАР ООО', mop:'Прокопенко Никита',                             visit:['ГУСАР']},
+    {name:'НПЦАП АО', mop:'Галин Андрей',                              visit:['НПЦАП']},
+    {name:'КБХИММАШ ИМ. А.М. ИСАЕВА АО', mop:'Кондря Максим',           visit:['КБХИММАШ','*ИСАЕВА']},
+    {name:'НПОДАР АО', mop:'Кондря Максим',                             visit:['НПОДАР','НПО ДАР']},
+    {name:'РЕГИОН ГНПП АО', mop:'Ореховский Сергей',                        visit:['РЕГИОН']},
+    {name:'РКК ЭНЕРГИЯ ПАО', mop:'Кондря Максим',                       visit:['РКК ЭНЕРГИЯ','ЭНЕРГИЯ']},
+    {name:'РПКБ АО', mop:'Хлебова Татьяна',                               visit:['РПКБ']},
+    {name:'РЯЗАНСКИЙ РАДИОЗАВОД АО', mop:'Беляев Дмитрий',               visit:['РРЗ','*РЯЗАНСКИЙ РАДИО']},
+    {name:'ЦНИИАГ АО', mop:'Хлебова Татьяна',                             visit:['ЦНИИАГ']},
+    {name:'ВЕДАПРОЕКТ ООО', mop:'Галин Андрей',                        visit:['ВЕДАПРОЕКТ']},
+    {name:'Российские Космические Системы АО', mop:'Архипов Герман',     visit:['РКС','*КОСМИЧЕСКИЕ СИСТЕМЫ']},
+  ],
+  /* колонки таблицы «Фокус» — как в макросе; справа — сегменты 1С */
+  FOCUS_COLS: [
+    ['INSIZE',                   ['INSIZE']],
+    ['MIYAMOTO',                 ['MIYAMOTOMETROLOGY','MIYAMOTO']],
+    ['ZCC-CT',                   ['ZCC-CT','ZCCCT','ZCC CT']],
+    ['АКСИС монолит',            ['АКСИС МОНОЛИТ']],
+    ['АКСИС прочее',             ['АКСИС ПРОЧЕЕ']],
+    ['Металлорез ГОСТ Инстулс',  ['МЕТАЛЛОРЕЗ (ГОСТ ИНСТУЛС)']],
+    ['Металлорез прочие ТМ',     ['МЕТАЛЛОРЕЗ (ПРОЧИЕ ТМ)']],
+    ['Метизы',                   ['МЕТИЗЫ']],
+    ['Оборудование',             ['ОБОРУДОВАНИЕ']],
+    ['Оснастка',                 ['ОСНАСТКА']],
+    ['Прочий инстр.',            ['ПРОЧИЙ ИНСТРУМЕНТ']]
+  ]
+};
+/* ================================================================= */
+
+const MONTHS = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const MONTHS_SHORT = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+const MONTH_RE = [/^янв/i,/^фев/i,/^мар/i,/^апр/i,/^ма[йя]/i,/^июн/i,/^июл/i,/^авг/i,/^сен/i,/^окт/i,/^ноя/i,/^дек/i];
+const MSK = 3 * 3600e3;
+
+/* ---------- общие утилиты ---------- */
+function parseCSV(text){
+  const rows=[]; let row=[], f='', q=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){f+='"';i++;} else q=false; } else f+=c; }
+    else if(c==='"') q=true;
+    else if(c===','){ row.push(f); f=''; }
+    else if(c==='\n'){ row.push(f); rows.push(row); row=[]; f=''; }
+    else if(c!=='\r') f+=c;
+  }
+  if(f!==''||row.length){ row.push(f); rows.push(row); }
+  return rows;
+}
+function num(s){
+  if(s==null) return null;
+  const t=String(s).replace(/[\s  %]/g,'').replace(',', '.');
+  if(!/^-?\d+(\.\d+)?$/.test(t)) return null;
+  return parseFloat(t);
+}
+const normTxt = s => String(s||'').toUpperCase().replace(/Ё/g,'Е').replace(/\s+/g,' ').trim();
+function normOrg(s){
+  return normTxt(s).replace(/["«»“”]/g,'')
+    .replace(/\s*\(\s*/g,' (').replace(/\s*\)/g,')')
+    .replace(/^(АО|ООО|ПАО|ОАО|ЗАО|ФГУП|АО НПП|НПП АО)\s+/,'').replace(/\s+(АО|ООО|ПАО|ОАО|ЗАО)$/,'')
+    .replace(/\s+/g,' ').trim();
+}
+const personKey = s => normTxt(String(s).replace(/\(.*$/,'')).split(' ').slice(0,2).join(' ');
+function rename(raw){
+  const k=personKey(raw);
+  for(const [from,to] of Object.entries(CONFIG.RENAME||{})) if(personKey(from)===k) return to;
+  return raw;
+}
+const isLeader = n => (CONFIG.LEADERS||[]).some(x=>personKey(x)===personKey(n));
+function shortRole(r){
+  if(!r) return r;
+  return String(r).replace(/^Руководитель\s+направлени[яе]\s*/i,'РН ').replace(/["«»“”]/g,'')
+    .replace(/инструмент/gi,'инстр.').replace(/оборудование/gi,'обор.').replace(/^Руководитель\s+/i,'Рук. ').replace(/\s+/g,' ').trim();
+}
+const roleOf = (n,fallback) => isLeader(n)?(roleFor(n)||fallback||''):(fallback||roleFor(n)||'');
+const LEADER_SEP = cols => `<div class="sep">Вне зачёта<\/div>`;
+const isHidden = n => (CONFIG.HIDE||[]).some(x=>personKey(x)===personKey(n));
+const isX = s => /^[хx]$/i.test(String(s).trim());
+const pad=n=>String(n).padStart(2,'0');
+const sum=a=>a.reduce((s,x)=>s+(x||0),0);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function fmtM(x){
+  const a=Math.abs(x||0), sg=x<0?'−':'';
+  if(a>=1e6) return sg+(a/1e6).toLocaleString('ru-RU',{maximumFractionDigits:a>=1e8?0:1,minimumFractionDigits:a>=1e8?0:1})+' млн';
+  if(a>=1e3) return sg+Math.round(a/1e3).toLocaleString('ru-RU')+' тыс';
+  return sg+Math.round(a).toLocaleString('ru-RU')+' ₽';
+}
+function lsGet(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+
+/* ---------- ВСТРЕЧИ и АКБ: вкладка месяца ---------- */
+function roleFor(name){
+  const k=Object.keys(CONFIG.ROLES).find(x=>x.replace(/ё/g,'е').toLowerCase()===name.replace(/ё/g,'е').toLowerCase());
+  return k?CONFIG.ROLES[k]:'';
+}
+/* Колонки: A ФИО, B должность, C клиент АКБ, D объём продаж АКБ, E план встреч, F факт встреч, G предприятие. */
+function parseSheet(rows){
+  const people=[]; let cur=null;
+  for(const r of rows){
+    const a=(r[0]||'').trim();
+    if(/ФИО/i.test(a)) continue;
+    if(a && /[А-Яа-яЁё]{2,}/.test(a) && !isX(a)){
+      const orig=a.replace(/\s+/g,' '), nm=rename(orig);
+      const role=(nm!==orig && /^РН /.test(nm))?'':roleOf(orig,(r[1]||'').trim());
+      cur={name:nm, role:shortRole(role), plan:num(r[4]), sub:null, visits:[], akb:[]};
+      people.push(cur);
+    }
+    if(!cur) continue;
+    const n=num(r[5]); const org=(r[6]||'').trim();
+    if(n!=null && org && !isX(org)){ cur.visits.push({org:normOrg(org), count:n}); }
+    else if(n!=null && !org){ cur.sub=n; }
+    const cl=(r[2]||'').trim();
+    if(cl && !isX(cl) && /[A-Za-zА-Яа-яЁё]/.test(cl) && !/АКБ/i.test(cl)) cur.akb.push({client:cl, amount:num(r[3])||0});
+  }
+  for(const p of people){
+    const m=new Map();
+    for(const v of p.visits){ m.set(v.org,(m.get(v.org)||0)+v.count); }
+    p.visits=[...m].map(([org,count])=>({org,count})).sort((x,y)=>y.count-x.count||x.org.localeCompare(y.org,'ru'));
+    const s=p.visits.reduce((s,v)=>s+v.count,0);
+    p.fact=Math.max(s, p.sub||0);
+    p.unnamed=p.fact-s;
+    p.kpi=p.plan? p.fact/p.plan : null;
+    const a=new Map();
+    for(const c of p.akb){ const k=normTxt(c.client); const o=a.get(k)||{client:c.client,key:k,amount:0}; o.amount+=c.amount; a.set(k,o); }
+    p.akb=[...a.values()].sort((x,y)=>y.amount-x.amount);
+  }
+  return people.filter(p=>!isHidden(p.name));
+}
+
+/* ---------- ФАКТ ИЗ 1С («Оплаты 2026», «Отгрузки 2026») ----------
+   Отчёт: строки «Менеджер → Клиент → Сегмент», колонки D… — месяцы 1, 2, 3…, затем «Итого».
+   Уровень строки определяем по суммам: клиенты менеджера в сумме дают итог менеджера,
+   сегменты клиента — итог клиента. */
+const KNOWN_SEGMENTS=new Set(CONFIG.CATEGORY_MAP.flatMap(x=>x[1]).map(normTxt));
+function parse1C(rows){
+  const totIdx=rows.findIndex(r=>/^итого$/i.test((r[0]||'').trim()));
+  if(totIdx<0) throw new Error('в отчёте 1С не найдена строка «Итого»');
+  const tr=rows[totIdx];
+  // колонки месяцев: по заголовку «1, 2, 3 … Итого», иначе — по сумме в строке «Итого»
+  let monthCols=null, monthIdx=null, totCol=null;
+  for(const r of rows.slice(0,Math.min(totIdx,12))){
+    const mIdx=c=>{ const n=num(c); if(n!=null&&n>=1&&n<=12&&Number.isInteger(n)) return n-1; const t=String(c||'').trim(); return MONTH_RE.findIndex(re=>re.test(t)); };
+    // месяцы могут начинаться с любой колонки (в выгрузках 1С бывают пустые колонки B и C, а бывают и нет)
+    let j=1; while(j<r.length && mIdx(r[j])<0) j++;
+    const cols=[], idx=[];
+    while(j<r.length && mIdx(r[j])>=0 && cols.length<12){ idx.push(mIdx(r[j])); cols.push(j); j++; }
+    if(cols.length && /итого/i.test(r[j]||'')){ monthCols=cols; monthIdx=idx; totCol=j; break; }
+  }
+  if(!monthCols){
+    let st=1; while(st<tr.length && num(tr[st])==null) st++;
+    for(let j=st+1;j<tr.length;j++){
+      const v=num(tr[j]); if(v==null) continue;
+      let s=0; for(let k=st;k<j;k++) s+=num(tr[k])||0;
+      if(Math.abs(s-v)<1){ totCol=j; break; }
+    }
+    if(totCol==null){ // отчёт без разбивки по месяцам — берём последнюю колонку с суммой
+      for(let j=tr.length-1;j>=1;j--) if(num(tr[j])!=null){ totCol=j; break; }
+      if(totCol==null) throw new Error('в отчёте 1С не найдена колонка с суммой');
+      monthCols=[];
+    } else { monthCols=[]; for(let k=st;k<totCol;k++) monthCols.push(k); }
+  }
+  if(!monthIdx) monthIdx=monthCols.map((c,i)=>i);
+  const vals=r=>{ const a=new Array(12).fill(0); monthCols.forEach((c,i)=>{ const k=monthIdx[i]; if(k>=0&&k<12) a[k]+=num(r[c])||0; }); return a; };
+  // период отчёта «… - 24.09.2026»
+  let asOf=null, from=null;
+  for(const r of rows.slice(0,6)) for(const c of r){ const m=String(c).match(/(\d\d)\.(\d\d)\.(\d{4})\s*-\s*(\d\d)\.(\d\d)\.(\d{4})/); if(m && !asOf){ from={y:+m[3],m:+m[2]-1,d:+m[1]}; asOf={y:+m[6],m:+m[5]-1,d:+m[4]}; } }
+  const managers=[], segTotals={};
+  let curM=null, curC=null, mRem=0, cRem=0;
+  const eps=1;
+  for(let i=0;i<totIdx;i++){
+    const r=rows[i]; const tot=num(r[totCol]); if(tot==null) continue;
+    const name=(r[0]||'').trim();
+    if(/^(параметры|ответственный|клиент|сегмент|партнер)/i.test(name) && !curM) continue;
+    const v=vals(r);
+    const isSeg = curC && (Math.abs(cRem)>eps || KNOWN_SEGMENTS.has(normTxt(name)) || name==='');
+    if(isSeg){
+      const sk=normTxt(name)||'БЕЗ СЕГМЕНТА';
+      curC.segs.push({name:sk, v}); cRem-=tot;
+      curM.seg[sk]=(curM.seg[sk]||new Array(12).fill(0)).map((x,k)=>x+v[k]);
+      curM.segTot[sk]=(curM.segTot[sk]||0)+tot;
+      segTotals[sk]=(segTotals[sk]||new Array(12).fill(0)).map((x,k)=>x+v[k]);
+      continue;
+    }
+    if(curM && Math.abs(mRem)>eps){ curC={name, v, segs:[]}; curM.clients.push(curC); cRem=tot; mRem-=tot; continue; }
+    curM={name:rename(name), key:personKey(rename(name)), v, tot, clients:[], seg:{}, segTot:{}}; managers.push(curM); mRem=tot; curC=null; cRem=0;
+  }
+  let total=vals(tr), grand=num(tr[totCol])||0;
+  const check=sum(managers.map(m=>sum(m.v)));
+  if(Math.abs(check-sum(total))>100) console.warn('1С: сумма по менеджерам',check,'≠ итого',sum(total));
+  // убираем из факта сегменты, которые не входят в план (оборудование, роботы)
+  const EX=new Set((CONFIG.EXCLUDED_SEGMENTS||[]).map(normTxt));
+  let exTot=0; const exV=new Array(12).fill(0);
+  for(const m of managers){
+    m.excluded=0;
+    for(const sk of Object.keys(m.segTot)) if(EX.has(sk)){
+      m.excluded+=m.segTot[sk]; m.tot-=m.segTot[sk];
+      if(m.seg[sk]) m.seg[sk].forEach((x,k)=>{ m.v[k]-=x; exV[k]+=x; });
+    }
+    exTot+=m.excluded;
+  }
+  total=total.map((x,k)=>x-exV[k]); grand-=exTot;
+  return {managers, segTotals, total, tot:grand, excluded:exTot, asOf, from, nMonths:monthCols.length};
+}
+
+/* ---------- ПЛАН («ПЛАН ПРОДАЖ 2026») ----------
+   Блоки: строка «ПОСТУПЛЕНИЯ Д/С» (план оплат), за ней строка «ПРОДАЖИ»/«ОТГРУЗКИ» с именем
+   (план отгрузок), ниже — строки номенклатурных направлений. Первый блок — вся компания,
+   блоки с «(РП …)» — руководители направлений. */
+function parsePlan(rows){
+  let head=null, monthCol={}, yearCol=2;
+  for(const r of rows.slice(0,10)){
+    const mc={}; r.forEach((c,j)=>{ const t=String(c).trim(); const k=MONTH_RE.findIndex(re=>re.test(t)); if(k>=0 && mc[k]==null) mc[k]=j; });
+    if(Object.keys(mc).length>=6){ head=r; monthCol=mc; const yc=r.findIndex(c=>/план/i.test(c)); if(yc>=0) yearCol=yc; break; }
+  }
+  if(!head){ for(let k=0;k<12;k++) monthCol[k]=3+k; }
+  const vals=r=>{ const a=new Array(12).fill(0); for(let k=0;k<12;k++) a[k]=num(r[monthCol[k]])||0; return a; };
+  const blocks=[]; let pendingPay=null, cur=null;
+  for(const r of rows){
+    const a=normTxt(r[0]), b=String(r[1]||'').replace(/\s+/g,' ').trim();
+    if(/^ПОСТУПЛ/.test(a)){ pendingPay=vals(r); cur=null; continue; }
+    if(/^(ПРОДАЖ|ОТГРУЗ)/.test(a)){
+      cur={name:b, pay:pendingPay, ship:vals(r), year:num(r[yearCol]), cats:[]};
+      blocks.push(cur); pendingPay=null; continue;
+    }
+    if(cur && !a && b && /[A-Za-zА-Яа-яЁё]/.test(b)){ cur.cats.push({name:b, v:vals(r)}); continue; }
+    if(cur && !a && !b) cur=null;
+  }
+  if(!blocks.length) throw new Error('в плане не найдены блоки «ПОСТУПЛЕНИЯ Д/С» / «ПРОДАЖИ»');
+  let ci=blocks.findIndex(b=>/кадкам/i.test(b.name)||!/[А-Яа-яЁё]/.test(b.name)); if(ci<0) ci=0;
+  const company=blocks[ci];
+  const rps=[], managers=[];
+  blocks.forEach((b,i)=>{
+    if(i===ci) return;
+    const m=b.name.match(/^(.*?)\s*\(\s*РП\s*[«"“]?([^»"”)]*)[»"”]?\s*\)/i);
+    if(m) rps.push({...b, person:rename(m[1].trim()), dir:m[2].trim()});
+    else if(!isHidden(b.name)) managers.push({...b, name:rename(b.name), key:personKey(rename(b.name))});
+  });
+  return {company, rps, managers};
+}
+function segsForCategory(cat){
+  const hit=CONFIG.CATEGORY_MAP.find(([re])=>re.test(cat));
+  return hit?hit[1].map(normTxt):[];
+}
+
+/* ---------- загрузка из Google ---------- */
+let mode='csv';
+function gvizUrl(doc, tab, extra){
+  const sel=/^\d+$/.test(tab)?`gid=${tab}`:`sheet=${encodeURIComponent(tab)}`;
+  return `https://docs.google.com/spreadsheets/d/${doc}/gviz/tq?${sel}&headers=0${extra}`;
+}
+function jsonp(doc, tab){
+  return new Promise((resolve,reject)=>{
+    const cb='__gv'+Math.random().toString(36).slice(2);
+    const s=document.createElement('script');
+    const done=()=>{clearTimeout(t); delete window[cb]; s.remove();};
+    const t=setTimeout(()=>{done();reject(new Error('таймаут ответа Google'));},15000);
+    window[cb]=d=>{done();
+      if(!d||d.status==='error'){reject(new Error((d&&d.errors&&d.errors[0]&&d.errors[0].detailed_message)||'ошибка Google'));return;}
+      resolve(d.table.rows.map(r=>(r.c||[]).map(c=>c?(c.f!=null?String(c.f):(c.v==null?'':String(c.v))):'')));
+    };
+    s.onerror=()=>{done();reject(new Error('нет доступа к Google-таблице'));};
+    s.src=gvizUrl(doc,tab,`&tqx=out:json;responseHandler:${cb};reqId:${Date.now()%1e6}`);
+    document.head.appendChild(s);
+  });
+}
+async function fetchRows(tab, doc=CONFIG.SHEET_ID){
+  if(mode==='csv'){
+    try{
+      const ac=new AbortController(); const to=setTimeout(()=>ac.abort(),15000);
+      const r=await fetch(gvizUrl(doc,tab,'&tqx=out:csv'),{cache:'no-store',signal:ac.signal}); clearTimeout(to);
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return parseCSV(await r.text());
+    }catch(e){ mode='jsonp'; }
+  }
+  return jsonp(doc,tab);
+}
+const sig = rows => JSON.stringify(rows.slice(0,60));
+
+function lastDay(y,m){ return new Date(Date.UTC(y,m+1,0)).getUTCDate(); }
+function monthsRange(){
+  const [sy,sm]=CONFIG.START_MONTH.split('-').map(Number);
+  const now=new Date(Date.now()+MSK);
+  const out=[]; let y=sy, m=sm-1;
+  while(y<now.getUTCFullYear() || (y===now.getUTCFullYear() && m<=now.getUTCMonth())){
+    out.push({y,m,key:`${y}-${pad(m+1)}`}); m++; if(m>11){m=0;y++;}
+  }
+  return out;
+}
+async function findMonth(mo, fallbackSig, fallbackRows, known){
+  const names=[];
+  if(CONFIG.TABS[mo.key]) names.push(CONFIG.TABS[mo.key]);
+  if(known) names.push(known);
+  const ld=lastDay(mo.y,mo.m);
+  for(const fmt of ['yyyy','yy']) for(let d=ld; d>=Math.max(1,ld-9); d--)
+    names.push(`${pad(d)}.${pad(mo.m+1)}.${fmt==='yyyy'?mo.y:String(mo.y).slice(2)}`);
+  const ok=rows=>rows && sig(rows)!==fallbackSig && isMeetingRows(rows);
+  const uniq=[...new Set(names)];
+  // сначала известное имя вкладки (один запрос), потом все варианты дат сразу, параллельно
+  const first=CONFIG.TABS[mo.key]||known;
+  if(first){ const rows=await fetchRows(first).catch(()=>null); if(ok(rows)) return {name:first,rows}; }
+  const rest=uniq.filter(n=>n!==first);
+  const got=await Promise.all(rest.map(n=>fetchRows(n).catch(()=>null)));
+  for(let i=0;i<rest.length;i++) if(ok(got[i])) return {name:rest[i],rows:got[i]};
+  if(mo.key===CONFIG.FIRST_TAB_MONTH && isMeetingRows(fallbackRows)) return {name:known||'первая вкладка', rows:fallbackRows};
+  return null;
+}
+let FB_SIG=null;
+const isMeetingRows = rows => rows.slice(0,5).some(r=>/ФИО/i.test(r[0]||''));
+const is1CRows = rows => rows.some(r=>/^итого$/i.test((r[0]||'').trim()));
+async function loadMeetings(){
+  const fbRows=await fetchRows('__нет_такой_вкладки__'+Date.now());
+  FB_SIG=sig(fbRows);
+  const known=lsGet('vstrechi.tabs',{});
+  const res=[];
+  const list=monthsRange();
+  let done=0; const prog=()=>{ const el=$('ovProg'); if(el) el.textContent=`Загружено месяцев: ${done} из ${list.length}`; };
+  prog();
+  for(let i=0;i<list.length;i+=6){
+    const part=await Promise.all(list.slice(i,i+6).map(mo=>findMonth(mo,FB_SIG,fbRows,known[mo.key]).then(h=>{done++;prog();return h&&({...mo,tab:h.name,people:parseSheet(h.rows)});})));
+    for(const p of part) if(p){ res.push(p); if(p.tab!=='первая вкладка') known[p.key]=p.tab; }
+  }
+  lsSet('vstrechi.tabs',known);
+  if(!res.length) throw new Error('не найдено ни одной вкладки встреч');
+  return res;
+}
+async function loadSales(){
+  const T=todayMSK(), q=Math.floor(T.m/3);
+  const qTabs=[0,1,2,3].map(k=>CONFIG.PAY_Q_TAB.replace('{q}',k+1).replace('{y}',T.y)), yTab=CONFIG.PAY_Y_TAB.replace('{y}',T.y);
+  const [payYRows, shipRows, planRows, ...payQRowsAll]=await Promise.all([
+    fetchRows(yTab), fetchRows(CONFIG.SHIP_TAB), fetchRows(CONFIG.PLAN_GID, CONFIG.PLAN_SHEET_ID),
+    ...qTabs.map(t=>fetchRows(t).catch(()=>[]))]);
+  if(!is1CRows(shipRows)) throw new Error('вкладка отгрузок (1С) не найдена или пустая — проверьте SHIP_TAB в настройках');
+  const notes=[];
+  // оплаты: проверяем, что это нужный лист и период в шапке отчёта совпадает с кварталом / годом
+  const checkPay=(rows, tab, start, what)=>{
+    if(!is1CRows(rows) || sig(rows)===sig(shipRows)){ notes.push(`нет листа «${tab}»`); return null; }
+    const r=parse1C(rows);
+    if(!r.from){ notes.push(`в листе «${tab}» не найден период отчёта`); return null; }
+    if(r.from.y!==start.y || r.from.m!==start.m || r.from.d!==1){ notes.push(`в листе «${tab}» период с ${pad(r.from.d)}.${pad(r.from.m+1)}.${r.from.y}, а для ${what} нужен с 01.${pad(start.m+1)}.${start.y}`); return null; }
+    return {...r, tab};
+  };
+  const payY=checkPay(payYRows, yTab, {y:T.y,m:0}, 'года');
+  // кварталы: «Оплаты 1кв 2026» … «Оплаты 4кв 2026». О проблемах сообщаем только для уже начавшихся кварталов
+  const payQs=qTabs.map((tab,k)=>{
+    const rows=payQRowsAll[k]; const started=k<=q; const n0=notes.length;
+    let r=null;
+    if(rows.length && sig(rows)===sig(payYRows) && k>0) notes.push(`лист «${tab}» совпадает с годовым — загрузите в него отчёт за квартал`);
+    else r=checkPay(rows, tab, {y:T.y,m:3*k}, 'квартала');
+    if(!started) notes.length=n0;
+    return r;
+  });
+  return {payQs, payY, qTabs, yTab, notes, ship:parse1C(shipRows), plan:parsePlan(planRows)};
+}
+
+
+function todayMSK(){ const n=new Date(Date.now()+MSK); return {y:n.getUTCFullYear(), m:n.getUTCMonth(), d:n.getUTCDate()}; }
+
+function paceOf(v, months, P){
+  let s=0;
+  for(const k of months){ if(k<P.m) s+=v[k]||0; else if(k===P.m) s+=(v[k]||0)*P.d/lastDay(P.y,P.m); }
+  return s;
+}
+
+function factByKey(src){
+  const m=new Map();
+  for(const x of src.managers){ const o=m.get(x.key)||new Array(12).fill(0); x.v.forEach((v,i)=>o[i]+=v); m.set(x.key,o); }
+  return m;
+}
+
+const SLUG={'СЕМИН ВЛАДИСЛАВ':'semin','КОНДРЯ МАКСИМ':'kondrya','ГАЛИН АНДРЕЙ':'galin','БЕСЕДКИН АЛЕКСАНДР':'besedkin','БЕЛЯЕВ ДМИТРИЙ':'belyaev','ХЛЕБОВА ТАТЬЯНА':'khlebova','ОРЕХОВСКИЙ СЕРГЕЙ':'orekhovsky','АРХИПОВ ГЕРМАН':'arkhipov','ЕРЫШЕВ АЛЕКСЕЙ':'eryshev'};
+const ALL=[0,1,2,3,4,5,6,7,8,9,10,11];
+const el=id=>document.getElementById(id);
+const pctS=(f,p)=>p>0?Math.round(f/p*100)+'%':'—';
+const cls=(f,p)=>f>=p?'up':'down';
+function bars(rows){
+  return rows.map(r=>{ const mx=Math.max(r.year,r.fact)||1;
+    return `<div class="gbar"><span>${esc(r.name)}<\/span><div class="tr"><i style="width:${Math.min(Math.max(r.fact,0)/mx,1)*100}%"><\/i><em style="left:${r.pace/mx*100}%" title="план на сегодня"><\/em><\/div><b class="${cls(r.fact,r.pace)}">${pctS(r.fact,r.pace)}<\/b><\/div>`; }).join('');
+}
+function tile(label,f,pace,year,asOf){
+  return `<span class="lab">${label}<\/span><span class="big">${pctS(f,pace)}<\/span><span class="sub">факт ${fmtM(f)} из ${fmtM(pace)} на ${pad(asOf.d)}.${pad(asOf.m+1)}; год — ${fmtM(year)} · с НДС<\/span>`;
+}
+const NOTE='<p class="note live">Живые данные дашборда: «Отгрузки 2026» (1С) и «План продаж 2026», суммы с НДС. Полоса — факт, риска — план на сегодня, правый край — годовой план. Процент — выполнение плана на сегодня.<\/p>';
+async function run(){
+  const st=el('lv-status'); if(st) st.textContent='План и факт 2026: загружаю из Google-таблиц…';
+  try{
+    const [shipRows,planRows]=await Promise.all([fetchRows(CONFIG.SHIP_TAB),fetchRows(CONFIG.PLAN_GID,CONFIG.PLAN_SHEET_ID)]);
+    if(!is1CRows(shipRows)) throw new Error('нет вкладки отгрузок 1С');
+    const ship=parse1C(shipRows), plan=parsePlan(planRows), a=ship.asOf||todayMSK();
+    const pace=v=>paceOf(v||[],ALL,a), segT=ship.segTotals;
+    const catFact=name=>{ let s=0; for(const k of segsForCategory(name)) if(segT[k]) s+=sum(segT[k]); return s; };
+    const c=plan.company, cf=sum(ship.total);
+    const groups=c.cats.filter(x=>sum(x.v)>0).map(x=>({name:x.name.replace(/\s*\(.*$/,'').replace(/\s+/g,' '),fact:catFact(x.name),pace:pace(x.v),year:sum(x.v)}));
+    const rps=plan.rps.map(r=>{ const cats=r.cats.filter(x=>sum(x.v)>0).map(x=>({name:x.name.replace(/\s*\(.*$/,'').replace(/\s+/g,' '),fact:catFact(x.name),pace:pace(x.v),year:sum(x.v)}));
+      return {person:r.person,dir:r.dir,cats,fact:sum(cats.map(x=>x.fact)),pace:pace(r.ship),year:sum(r.ship)}; });
+    const fm=factByKey(ship);
+    const people=plan.managers.filter(m=>sum(m.ship)>0).map(m=>({name:m.name,key:m.key,fact:sum(fm.get(m.key)||[]),pace:pace(m.ship),year:sum(m.ship)}));
+    // КД: вся компания
+    if(el('lv-k-plan')) el('lv-k-plan').innerHTML=tile('План 2026 на сегодня',cf,pace(c.ship),sum(c.ship),a);
+    if(el('lv-k-plang')) el('lv-k-plang').innerHTML=bars(groups)+NOTE;
+    if(el('lv-k-pdir')) el('lv-k-pdir').innerHTML=rps.map(r=>`<tr><td class="t">${esc(r.person)} · ${esc(r.dir.toLowerCase())}<\/td><td>${fmtM(r.year)}<\/td><td>${fmtM(r.pace)}<\/td><td><b>${fmtM(r.fact)}<\/b><\/td><td class="${cls(r.fact,r.pace)}">${pctS(r.fact,r.pace)}<\/td><\/tr>`).join('');
+    if(el('lv-k-ppl')) el('lv-k-ppl').innerHTML=people.sort((x,y)=>y.fact/(y.pace||1)-x.fact/(x.pace||1)).map(r=>`<tr><td class="t">${esc(r.name)}<\/td><td>${fmtM(r.year)}<\/td><td>${fmtM(r.pace)}<\/td><td><b>${fmtM(r.fact)}<\/b><\/td><td class="${cls(r.fact,r.pace)}">${pctS(r.fact,r.pace)}<\/td><\/tr>`).join('');
+    if(el('lv-k-note')) el('lv-k-note').textContent=`Живые данные дашборда на ${pad(a.d)}.${pad(a.m+1)}, суммы с НДС, без оборудования и роботов в итогах людей и компании. Факт по людям — по ответственному в 1С (Красное Знамя здесь у того, кто записан в 1С).`;
+    // направления
+    for(const [id,re] of [['r',/ратников/i],['m',/архипов/i]]){
+      const r=rps.find(x=>re.test(x.person)); if(!r) continue;
+      if(el(`lv-${id}-plan`)) el(`lv-${id}-plan`).innerHTML=tile('План направления на сегодня',r.fact,r.pace,r.year,a);
+      if(el(`lv-${id}-plang`)) el(`lv-${id}-plang`).innerHTML=bars(r.cats)+NOTE;
+    }
+    // МОП: личный план
+    for(const p of people){ const s=SLUG[p.key]; const t=s&&el('lv-p-'+s); if(t) t.innerHTML=tile('Личный план 2026 на сегодня',p.fact,p.pace,p.year,a); }
+    const n=new Date(Date.now()+MSK);
+    if(st) st.textContent=`План и факт 2026 — из дашборда: отчёт 1С на ${pad(a.d)}.${pad(a.m+1)}.${a.y}, загружено ${pad(n.getUTCHours())}:${pad(n.getUTCMinutes())}.`;
+  }catch(e){ if(st) st.textContent='План и факт 2026 не загрузились ('+e.message+'). Показаны данные на 26.10.2026.'; console.warn(e); }
+}
+
+const $=()=>null;
+const MN=['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+function aliases(name){ const n=normOrg(name), out=[n];
+  for(const f of (CONFIG.FOCUS||[])) if(normOrg(f.name)===n) for(const v of (f.visit||[])) out.push(v.startsWith('*')?v:normOrg(v));
+  return out; }
+function hit(org,al){ return al.some(a=>a.startsWith('*')?org.includes(normTxt(a.slice(1))):(org===a||a.startsWith(org+' ')||org.startsWith(a+' ')||a.split(' ')[0]===org)); }
+async function visits(){
+  const months=await loadMeetings();
+  document.querySelectorAll('section.visits').forEach(sec=>{
+    const slug=sec.id.replace('lv-v-',''); const key=Object.keys(SLUG).find(k=>SLUG[k]===slug);
+    const asg=JSON.parse(sec.dataset.asg||'[]').map(x=>({...x,al:aliases(x.n),v:0,last:null}));
+    const per=months.map(mo=>({mo,p:mo.people.find(p=>personKey(p.name)===key)}));
+    const orgs=new Map(); let tot=0, plan=0;
+    for(const {mo,p} of per){ if(!p) continue; tot+=p.fact||0; plan+=p.plan||0;
+      for(const v of p.visits){ const o=orgs.get(v.org)||{org:v.org,n:0,last:null,months:{}}; o.n+=v.count; o.months[mo.m]=(o.months[mo.m]||0)+v.count; o.last=mo; orgs.set(v.org,o);
+        for(const a of asg) if(hit(v.org,a.al)){ a.v+=v.count; a.last=mo; } } }
+    const last3=per.slice(-3).map(x=>x.mo.m);
+    const list=[...orgs.values()].sort((x,y)=>y.n-x.n);
+    const isA=o=>asg.some(a=>hit(o.org,a.al));
+    const mx=Math.max(1,...per.map(x=>Math.max(x.p?x.p.fact:0,x.p?x.p.plan||0:0)));
+    const W=640,H=150,n=per.length,gw=W/Math.max(n,1);
+    const svg=per.map((x,i)=>{const f=x.p?x.p.fact:0,pl=x.p?x.p.plan||0:0,h=f/mx*(H-40),hp=pl/mx*(H-40),X=i*gw+gw*.2;
+      return `<rect x="${X}" y="${H-20-h}" width="${gw*.6}" height="${h}" class="b0"/>${pl?`<rect x="${X-2}" y="${H-21-hp}" width="${gw*.6+4}" height="2" style="fill:#fff"/>`:''}<text x="${X+gw*.3}" y="${H-24-Math.max(h,hp)}" class="bv">${f}<\/text><text x="${X+gw*.3}" y="${H-5}" class="bl">${MN[x.mo.m]}<\/text>`}).join('');
+    const noVis=asg.filter(a=>/^[AB]$/.test(a.c)&&!(a.last&&last3.includes(a.last.m)));
+    sec.innerHTML=`<h2>Посещения предприятий, 2026<\/h2>
+<div class="abrow"><span class="abx"><b>${tot}<\/b> встреч${plan?` из плана ${plan} (${Math.round(tot/plan*100)}%)`:''}<\/span><span class="abx"><b>${list.length}<\/b> предприятий<\/span><span class="abx">закреплённых посещено: <b>${asg.filter(a=>a.v>0).length}<\/b> из ${asg.length}<\/span><\/div>
+<div class="grid2"><div><h3>Встречи по месяцам (белая риска — план)<\/h3><div class="hs"><svg viewBox="0 0 ${W} ${H}" width="100%">${svg}<\/svg><\/div>
+${noVis.length?`<p class="note"><b style="color:var(--color-bad)">A/B без визитов за последние 3 месяца:<\/b> ${noVis.map(a=>esc(a.n)).join(', ')}<\/p>`:'<p class="note">Все закреплённые A и B посещались за последние 3 месяца.<\/p>'}<\/div>
+<div class="scroll" style="max-height:360px"><table><thead><tr><th class="t">Предприятие (как в «ВЫРАБОТКЕ»)<\/th><th>Визитов<\/th>${last3.map(k=>`<th>${MN[k]}<\/th>`).join('')}<th class="t">Закреплено<\/th><\/tr><\/thead><tbody>
+${list.map(o=>`<tr><td class="t wrap">${esc(o.org)}<\/td><td><b>${o.n}<\/b><\/td>${last3.map(k=>`<td>${o.months[k]||''}<\/td>`).join('')}<td class="t">${isA(o)?'да':'<span class="sub">нет<\/span>'}<\/td><\/tr>`).join('')}
+<\/tbody><\/table><\/div><\/div>
+<p class="note">Живые данные дашборда: вкладки месяцев «ВЫРАБОТКИ МОП». Предприятия сопоставлены с закреплением по названию и сокращениям из настроек дашборда, поэтому возможны неточности.<\/p>`;
+  });
+}
+window.kdLive=run;
+const b=el('lv-refresh'); if(b) b.addEventListener('click',()=>{run();visits().catch(()=>{});});
+run();
+visits().catch(e=>{document.querySelectorAll('section.visits .note').forEach(n=>n.textContent='Посещения не загрузились: '+e.message);});
+})();
+</script>
+<script>
+(function(){
+const SHEET='1hSr8j8-cowQ5zQirHyrGMFCJYqKGTs49L_pc6eF1fqE', K="5N24eASH1nbNGs5I4m4P/3G9XmOHBdX7cfvBYdKMscE=";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const lsGet=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}};
+function codeHash(c){ let h=5381; for(const ch of String(c)) h=((h*33)^ch.charCodeAt(0))>>>0; return 'k'+h.toString(36); }
+async function currentCode(){
+  try{ const r=await fetch('https://docs.google.com/spreadsheets/d/'+SHEET+'/gviz/tq?sheet='+encodeURIComponent('Пароль')+'&headers=0&tqx=out:csv&_='+Date.now(),{cache:'no-store'});
+    const v=(await r.text()).split(/\r?\n/)[0].split(',')[0].replace(/["\s]/g,''); if(/^\d{4,8}$/.test(v)) return v; }catch(e){}
+  return '7452';
+}
+async function unlock(){
+  const code=await currentCode();
+  if(lsGet('panel.key',null)===codeHash(code)) return;
+  $('olock').hidden=false; setTimeout(()=>{try{$('olc').focus();}catch(e){}},50);
+  await new Promise(res=>{ $('olf').onsubmit=e=>{ e.preventDefault(); const v=$('olc').value.replace(/\s/g,'');
+    if(v===code){ lsSet('panel.key',codeHash(code)); $('olock').hidden=true; res(); } else { $('ole').textContent='Неверный код'; $('olc').value=''; } }; });
+}
+const u=x=>Uint8Array.from(atob(x),c=>c.charCodeAt(0));
+const LBL={'arkhipov':'Архипов (МОП)','ratnikov':'Ратников · металлорез','arkhipov-rn':'Архипов · метизы'};
+const pillCls=t=>t==='A'?'ok':t==='B'?'warn':t==='C'?'bad':'new';
+function show(sl){
+  const pages=[...document.querySelectorAll('#opages .page')]; if(!pages.some(p=>p.id==='p-'+sl)) sl=pages[0]&&pages[0].id.slice(2);
+  pages.forEach(p=>p.hidden=p.id!=='p-'+sl);
+  document.querySelectorAll('#otabs a').forEach(a=>{ if(a.dataset.p===sl) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
+  lsSet('otdel.sel',sl);
+}
+(async function(){
+  await unlock();
+  try{
+    const r=await fetch('otdel-data.enc?t='+Date.now(),{cache:'no-store'}); if(!r.ok) throw new Error('файл данных не найден ('+r.status+')');
+    const j=await r.json(); const k=await crypto.subtle.importKey('raw',u(K),'AES-GCM',false,['decrypt']);
+    const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:u(j.i)},k,u(j.c));
+    const d=JSON.parse(await new Response(new Blob([pt]).stream().pipeThrough(new DecompressionStream('gzip'))).text());
+    const st=document.createElement('style'); st.textContent=d.css; document.head.appendChild(st);
+    const mop=d.pages.filter(p=>!p.rn), rn=d.pages.filter(p=>p.rn);
+    const tab=p=>`<a href="#${p.slug}" data-p="${p.slug}">${esc(LBL[p.slug]||p.name.split(' ')[0])}${p.tier&&!p.rn?` <span class="pill ${pillCls(p.tier)}">${esc(p.tier)}</span>`:''}</a>`;
+    $('otabs').innerHTML='<span class="grp">МОП</span>'+mop.map(tab).join('')+(rn.length?'<span class="tsep" aria-hidden="true"></span><span class="grp">РН</span>'+rn.map(tab).join(''):'');
+    $('opages').innerHTML=d.pages.map(p=>`<div class="page" id="p-${p.slug}" hidden><header class="mh"><div><p class="eyebrow">${esc(p.eb)}</p><h1>${esc(p.name)}</h1>${p.lede?`<p class="lede">${esc(p.lede)}</p>`:''}</div>${p.tier||p.score!=null?`<div class="score">${p.tier?`<span class="pill big ${pillCls(p.tier)}">${esc(p.tier)}</span>`:''}${p.score!=null?`<span class="sc">${p.score}<small>/100</small></span>`:''}</div>`:''}</header>${p.html}</div>`).join('');
+    document.querySelectorAll('#otabs a').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); show(a.dataset.p); try{history.replaceState(null,'','#'+a.dataset.p);}catch(_){} window.scrollTo(0,0); }));
+    addEventListener('hashchange',()=>show(location.hash.slice(1)));
+    show(location.hash.slice(1)||lsGet('otdel.sel','semin'));
+    $('lv-status').textContent='Данные на '+d.generated;
+    const s=document.createElement('script'); s.textContent=$('live-src').textContent.replace(/<\\\//g,'</'); document.body.appendChild(s);
+    try{ (new Function('d',d.js))(d); }catch(e){ console.error(e); }
+  }catch(e){ console.error(e); $('opages').innerHTML='<div id="ostat">Данные не загрузились: '+esc(e.message)+'</div>'; }
+})();
+})();
+</script>
+</body></html>
