@@ -388,7 +388,8 @@ body.mobile .row .who .nm,body.mobile .arow .who .nm{flex:0 1 auto}
 body.mobile .focus{overflow-x:auto;padding:8px}
 body.mobile .focus .fsw{flex-wrap:wrap;gap:6px;margin-bottom:8px} body.mobile .focus .fsw button{font-size:13px;padding:6px 12px} body.mobile .focus .fsw .fsn{font-size:11px;margin-left:0;width:100%}
 body.mobile .focus .mkp{font-size:11px;padding:2px 6px} body.mobile .focus .fcat{font-size:10px}
-body.mobile .otd{margin-left:auto}
+body.mobile header{flex-wrap:wrap;row-gap:8px} body.mobile .brand{flex:1 1 calc(100% - 60px);min-width:0}
+body.mobile .otd{margin-left:0} body.mobile .otd,body.mobile .mgmt{font-size:13px;padding:6px 12px}
 body.mobile .focus table{width:auto;height:auto;table-layout:auto}
 body.mobile .focus td.nm{min-width:150px;max-width:170px;white-space:normal;line-height:1.2}
 body.mobile .focus td.n{display:none}body.mobile .focus th:first-child{display:none}
@@ -397,6 +398,32 @@ body.mobile .focus td,body.mobile .focus th{font-size:12px;padding:5px 3px}
 body.mobile .focus td.nm{position:sticky;left:0;background:var(--surface-1);z-index:1}
 
 /* ---------- ДЗ / ПДЗ ---------- */
+.exp{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.exp .exw{flex:1 1 auto;min-height:0;overflow:hidden}
+.exp table{width:100%;height:100%;border-collapse:separate;border-spacing:.5vw 0;table-layout:fixed}
+.exp th{font-size:1.55vh;color:var(--text-muted);font-weight:500;text-align:left;padding:.4vh 0;border-bottom:1px solid var(--border)}
+.exp th.cur{color:var(--accent)} .exp th small{font-size:1.2vh;color:var(--text-muted)}
+.exp td{padding:.25vh 0;vertical-align:middle;border-bottom:1px solid rgba(255,255,255,.05)}
+.exp td.nm{font-size:1.9vh;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.exp tr.lead td.nm{color:var(--text-secondary)}
+.exp td.q.cur{background:rgba(190,241,39,.04)}
+.exp .ev{font-size:1.9vh;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2}
+.exp .exbar{display:flex;height:1.1vh;border-radius:.4vh;overflow:hidden;background:var(--surface-2);margin-top:.3vh}
+.exp .exbar i{display:block;height:100%}
+.exp td.y .ev{font-size:2.1vh}
+.exp .exsplit{font-size:1.25vh;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.exp tfoot td{font-size:1.8vh;font-weight:700;color:var(--text-secondary);border-bottom:0;border-top:1px solid var(--border);padding-top:.5vh}
+.exp tr.exsep td{height:.6vh;border-bottom:1px dashed var(--border)}
+.exp .exleg{display:flex;gap:1.4vw;align-items:center;font-size:1.4vh;color:var(--text-secondary);margin-top:.6vh;flex:0 0 auto}
+.exp .exleg .exn{margin-left:auto;color:var(--text-muted);font-size:1.25vh}
+.exd{display:inline-block;width:1.1vh;height:1.1vh;border-radius:2px;margin-right:.4vw;vertical-align:-.1vh}
+body.mobile .exp{overflow-x:auto;padding:8px}
+body.mobile .exp .exw{overflow:visible}
+body.mobile .exp table{width:640px;height:auto;border-spacing:8px 0}
+body.mobile .exp th{font-size:12px} body.mobile .exp td.nm{font-size:13px} body.mobile .exp .ev{font-size:13px} body.mobile .exp td.y .ev{font-size:14px}
+body.mobile .exp .exbar{height:7px} body.mobile .exp .exsplit{font-size:10px} body.mobile .exp tfoot td{font-size:12px}
+body.mobile .exp .exleg{flex-wrap:wrap;font-size:11px;gap:10px} body.mobile .exp .exleg .exn{margin-left:0;width:100%;font-size:10px}
+body.mobile .exd{width:9px;height:9px;margin-right:4px}
 .dz-grid{flex:1 1 auto;display:grid;grid-template-columns:54fr 46fr;grid-template-rows:38fr 62fr;gap:1vh .8vw;min-height:0}
 .dz-grid > .panel{display:flex;flex-direction:column;min-height:0;overflow:hidden}
 .dz-mgr{grid-row:1/3}
@@ -507,6 +534,8 @@ body.mobile .dz-legend{font-size:11px}
   <section class="screen"><div class="panel focus" id="focusBox"></div></section>
   <!-- 8. ДЗ / ПДЗ -->
   <section class="screen"><div class="dz-grid" id="dzBox"></div></section>
+  <!-- 9. Расходы на транспорт -->
+  <section class="screen"><div class="panel exp" id="expBox"></div></section>
 </main>
 
 <footer>
@@ -756,16 +785,21 @@ function roleFor(name){
 /* Колонки: A ФИО, B должность, C клиент АКБ, D объём продаж АКБ, E план встреч, F факт встреч, G предприятие. */
 function parseSheet(rows){
   const people=[]; let cur=null;
+  // расходы на транспорт: колонки I (АЗС), J (такси/каршеринг), K (амортизация) — по заголовку, иначе по умолчанию
+  const hdr=rows.find(r=>/ФИО/i.test(r[0]||''))||[], col=(re,d)=>{ const i=hdr.findIndex(x=>re.test(x||'')); return i>=0?i:d; };
+  const EC={fuel:col(/АЗС|топлив/i,8), taxi:col(/такси|каршер/i,9), amort:col(/амортиз/i,10)};
   for(const r of rows){
     const a=(r[0]||'').trim();
     if(/ФИО/i.test(a)) continue;
     if(a && /[А-Яа-яЁё]{2,}/.test(a) && !isX(a)){
       const orig=a.replace(/\s+/g,' '), nm=rename(orig);
       const role=(nm!==orig && /^РН /.test(nm))?'':roleOf(orig,(r[1]||'').trim());
-      cur={name:nm, role:shortRole(role), plan:num(r[4]), sub:null, visits:[], akb:[]};
+      cur={name:nm, role:shortRole(role), plan:num(r[4]), sub:null, visits:[], akb:[], exp:{fuel:null,taxi:null,amort:null,x:[]}};
       people.push(cur);
     }
     if(!cur) continue;
+    for(const [k,c] of Object.entries(EC)){ const raw=(r[c]||'').trim(); if(!raw) continue; const v=num(raw);
+      if(v!=null) cur.exp[k]=(cur.exp[k]||0)+v; else if(isX(raw)||/не\s*испол/i.test(raw)){ if(!cur.exp.x.includes(k)) cur.exp.x.push(k); } }
     const n=num(r[5]); const org=(r[6]||'').trim();
     if(n!=null && org && !isX(org)){ cur.visits.push({org:normOrg(org), count:n}); }
     else if(n!=null && !org){ cur.sub=n; }
@@ -1030,7 +1064,8 @@ const SCREENS=[
   {tab:'Направления',    title:'Отгрузки по направлениям: руководители направлений', month:false, tiles:'sales', sales:true},
   {tab:'АКБ',            title:'Активная клиентская база',            month:true,  tiles:'akb'},
   {tab:'Фокус',          title:'Фокусные предприятия: отгрузки по категориям', month:false, tiles:'focus', focus:true},
-  {tab:'ДЗ/ПДЗ',         title:'Дебиторская и просроченная задолженность', month:false, tiles:'dz', dz:true}
+  {tab:'ДЗ/ПДЗ',         title:'Дебиторская и просроченная задолженность', month:false, tiles:'dz', dz:true},
+  {tab:'Расходы',        title:'Расходы на транспорт по сотрудникам', month:false, tiles:'exp', exp:true}
 ];
 $('overlay').classList.add('js');
 if(CONFIG.MOBILE){ document.documentElement.classList.add('mobile'); document.body.classList.add('mobile'); CONFIG.ROTATE_SEC=0; }
@@ -1047,6 +1082,7 @@ function render(){
   if(S.sales){ renderSalesScreen(); return; }
   if(S.focus){ renderFocus(); return; }
   if(S.dz){ renderDZ(); return; }
+  if(S.exp){ renderExp(); return; }
   if(!DATA){ return; }
   const idx=DATA.findIndex(d=>d.key===sel); const mo=DATA[idx]; const prev=DATA[idx-1];
   $('mLabel').textContent=mName(mo);
@@ -1719,6 +1755,54 @@ function drawDZChart(H, D){
   g+=`<text x="${padL}" y="${fs}" font-size="${fs*0.85}" fill="var(--text-muted)"><tspan fill="#8a827e">■</tspan> ДЗ  <tspan fill="#c4544a">■</tspan> ПДЗ · пик ПДЗ ${fmtM(mx.pdz)} (${pad(mx.d.d)}.${pad(mx.d.m+1)})</text>`;
   g+=`<line x1="${padL}" x2="${W-padR}" y1="${Hh-padB}" y2="${Hh-padB}" stroke="var(--border)"/>`;
   svg.innerHTML=g;
+}
+/* ---------- Расходы на транспорт: топливо (АЗС), такси/каршеринг, амортизация авто — из вкладок месяцев ---------- */
+const EXP_T=[['fuel','Топливо','#e8833a'],['taxi','Такси / каршеринг','#4aa3e8'],['amort','Амортизация авто','#a98be8']];
+function expData(){
+  const T=todayMSK(), Y=T.y, mons=(DATA||[]).filter(d=>d.y===Y);
+  const ppl=new Map();
+  for(const d of mons) for(const p of d.people){ const k=personKey(p.name); if(!ppl.has(k)) ppl.set(k,{name:p.name,key:k,m:{}}); const o=ppl.get(k); o.name=p.name; o.m[d.m]=p.exp||{fuel:null,taxi:null,amort:null,x:[]}; }
+  const rows=[...ppl.values()].map(o=>{
+    const q=[0,1,2,3].map(qi=>{ const ms=[qi*3,qi*3+1,qi*3+2]; const t={fuel:0,taxi:0,amort:0}; ms.forEach(m=>{ const e=o.m[m]; if(e) EXP_T.forEach(([k])=>t[k]+=e[k]||0); }); t.sum=t.fuel+t.taxi+t.amort; t.ms=ms; return t; });
+    const y={fuel:sum(q.map(x=>x.fuel)),taxi:sum(q.map(x=>x.taxi)),amort:sum(q.map(x=>x.amort))}; y.sum=y.fuel+y.taxi+y.amort;
+    return {...o, q, y, lead:isLeader(o.name)};
+  }).filter(r=>r.y.sum>0.5).sort((a,b)=>a.lead-b.lead||b.y.sum-a.y.sum);
+  return {Y, mons, rows, qNow:Math.floor(T.m/3), lastM:mons.length?mons[mons.length-1].m:T.m};
+}
+function renderExp(){
+  const box=$('expBox');
+  if(!DATA){ box.innerHTML='<div class="empty">Загружаю…</div>'; return; }
+  const E=expData(), {rows}=E;
+  const rub=v=>Math.round(v||0).toLocaleString('ru-RU')+' ₽';
+  const tk=v=>v>0.5?(v>=1e6?(v/1e6).toLocaleString('ru-RU',{maximumFractionDigits:2})+' млн':(v/1e3).toLocaleString('ru-RU',{maximumFractionDigits:1,minimumFractionDigits:v<1e4?1:0})+' тыс'):'—';
+  const tot={fuel:0,taxi:0,amort:0}; rows.forEach(r=>EXP_T.forEach(([k])=>tot[k]+=r.y[k])); tot.sum=tot.fuel+tot.taxi+tot.amort;
+  const qt=[0,1,2,3].map(qi=>sum(rows.map(r=>r.q[qi].sum)));
+  $('subtitle').textContent=`${E.Y} год по кварталам · из вкладок месяцев «ВЫРАБОТКИ МОП» · наведите на квартал — помесячно`;
+  const qn=E.qNow, qcur=k=>sum(rows.map(r=>r.q[qn][k]));
+  $('tiles').innerHTML=`
+   <div class="tile"><div class="lbl">Расходы на транспорт · ${E.Y}</div><div class="val">${tk(tot.sum)}</div><div class="note">${qn+1} кв.: ${tk(qt[qn])} · ${rows.length} сотр.</div></div>
+   ${EXP_T.map(([k,l,c])=>`<div class="tile"><div class="lbl"><i class="exd" style="background:${c}"></i>${l} · ${E.Y}</div><div class="val">${tk(tot[k])}</div><div class="note">${tot.sum>0?Math.round(tot[k]/tot.sum*100):0}% расходов · ${qn+1} кв.: ${tk(qcur(k))}</div></div>`).join('')}`;
+  if(!rows.length){ box.innerHTML='<div class="empty">Расходы на транспорт в вкладках месяцев не заполнены</div>'; return; }
+  const maxQ=Math.max(1,...rows.flatMap(r=>r.q.map(x=>x.sum)));
+  const mTip=(r,m)=>{ const e=r.m[m]; const lbl=MONTHS[m];
+    if(m>E.lastM) return `${lbl}: ещё не наступил`;
+    if(!e) return `${lbl}: сотрудника нет во вкладке месяца`;
+    const parts=EXP_T.map(([k,l])=>e[k]!=null?`${l.toLowerCase()} ${rub(e[k])}`:e.x.includes(k)?`${l.toLowerCase()} — х`:null).filter(Boolean);
+    const s=(e.fuel||0)+(e.taxi||0)+(e.amort||0);
+    return parts.length?`<b>${lbl}: ${rub(s)}</b><br>&nbsp;&nbsp;${parts.join('<br>&nbsp;&nbsp;')}`:`${lbl}: не заполнено`; };
+  const bar=(t,max)=>`<div class="exbar">${EXP_T.map(([k,,c])=>t[k]>0.5?`<i style="width:${t[k]/max*100}%;background:${c}"></i>`:'').join('')}</div>`;
+  const cell=(r,qi)=>{ const t=r.q[qi]; const fut=qi>E.qNow;
+    const tip=`${esc(shortName(r.name))} · ${qi+1} квартал: <b>${rub(t.sum)}</b><br>`+EXP_T.map(([k,l])=>`${l}: ${rub(t[k])}`).join('<br>')+'<br>— по месяцам —<br>'+t.ms.map(m=>mTip(r,m)).join('<br>');
+    return `<td class="q${qi===E.qNow?' cur':''}${fut?' fut':''}"${fut?'':` data-tip="${esc(tip)}"`}>${fut?'':`<div class="ev">${tk(t.sum)}</div>${bar(t,maxQ)}`}</td>`; };
+  let sepDone=false;
+  const body=rows.map(r=>{ let pre=''; if(r.lead&&!sepDone){ sepDone=true; pre=`<tr class="exsep"><td colspan="6"></td></tr>`; }
+    const ytip=`${esc(r.name)} · ${E.Y} год: <b>${rub(r.y.sum)}</b><br>`+EXP_T.map(([k,l])=>`${l}: ${rub(r.y[k])}`).join('<br>');
+    return pre+`<tr${r.lead?' class="lead"':''}><td class="nm">${esc(shortName(r.name))}</td>${[0,1,2,3].map(qi=>cell(r,qi)).join('')}<td class="y" data-tip="${esc(ytip)}"><div class="ev">${tk(r.y.sum)}</div><div class="exsplit">${EXP_T.map(([k,,c])=>r.y[k]>0.5?`<span style="color:${c}">${tk(r.y[k])}</span>`:'').filter(Boolean).join(' · ')}</div></td></tr>`; }).join('');
+  box.innerHTML=`<div class="exw"><table><colgroup><col style="width:15%"><col><col><col><col><col style="width:17%"></colgroup>
+   <thead><tr><th class="l">Сотрудник</th>${[0,1,2,3].map(qi=>`<th class="${qi===E.qNow?'cur':''}">${qi+1} квартал${qi===E.qNow?' <small>(идёт)</small>':''}</th>`).join('')}<th>Итого ${E.Y}</th></tr></thead>
+   <tbody>${body}</tbody>
+   <tfoot><tr><td class="nm">Всего</td>${[0,1,2,3].map(qi=>`<td class="q">${qi>E.qNow?'':tk(qt[qi])}</td>`).join('')}<td class="y">${tk(tot.sum)}</td></tr></tfoot></table></div>
+   <div class="exleg">${EXP_T.map(([,l,c])=>`<span><i class="exd" style="background:${c}"></i>${l}</span>`).join('')}<span class="exn">суммы — как внесены во вкладки месяцев · «х» — не положено · пусто — не заполнено</span></div>`;
 }
 /* ---------- экраны, автопрокрутка ---------- */
 function show(i){
