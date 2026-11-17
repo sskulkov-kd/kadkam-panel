@@ -630,6 +630,7 @@ const CONFIG = {
   DZ_KPDZ_R: 0.06,        // выше 6% — красный
   DZ_TOP_CLIENTS: 12,
   DZ_OTHER: ['Егоров Денис','Токарь Илья','Беляев Андрей','Прошина Мария','Прокопенко Никита'],   // на листе ДЗ/ПДЗ — одной строкой «Прочие»
+  EXP_HIDE: ['Токарь Илья','РН Измерительный инстр.'],   // «Расходы»: не показывать (руководители Ерышев и Кульков — только в разделе «Управление»)
   DZ_EXCLUDE: [/МЕТИЗ-ЭКСПЕРТ/i, /ТОТАЛ-ГРУПП/i],   // не показывать: выведены из ПДЗ (исполнительный лист)
   DZ_MONTH_RESULT_DAY: 7, // файл «итогов месяца» — первый файл месяца, датированный не позже этого числа
   /* исключения: долг по организации+контрагенту записывать другому менеджеру */
@@ -1766,7 +1767,7 @@ function expData(){
     const q=[0,1,2,3].map(qi=>{ const ms=[qi*3,qi*3+1,qi*3+2]; const t={fuel:0,taxi:0,amort:0}; ms.forEach(m=>{ const e=o.m[m]; if(e) EXP_T.forEach(([k])=>t[k]+=e[k]||0); }); t.sum=t.fuel+t.taxi+t.amort; t.ms=ms; return t; });
     const y={fuel:sum(q.map(x=>x.fuel)),taxi:sum(q.map(x=>x.taxi)),amort:sum(q.map(x=>x.amort))}; y.sum=y.fuel+y.taxi+y.amort;
     return {...o, q, y, lead:isLeader(o.name)};
-  }).filter(r=>r.y.sum>0.5).sort((a,b)=>a.lead-b.lead||b.y.sum-a.y.sum);
+  }).filter(r=>r.y.sum>0.5 && !r.lead && !(CONFIG.EXP_HIDE||[]).some(x=>personKey(x)===r.key)).sort((a,b)=>b.y.sum-a.y.sum);
   return {Y, mons, rows, qNow:Math.floor(T.m/3), lastM:mons.length?mons[mons.length-1].m:T.m};
 }
 function renderExp(){
